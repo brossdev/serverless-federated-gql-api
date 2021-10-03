@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@apollo/federation": "^0.33.0",
+    "@apollo/gateway": "^0.42.0",
     "@aws-cdk/core": "1.124.0",
     "@serverless-stack/cli": "0.44.1",
     "@serverless-stack/resources": "0.44.1",
