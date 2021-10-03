@@ -1,0 +1,20 @@
+{
+  "name": "management",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "sst test",
+    "start": "sst start",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.124.0"
+  },
+  "dependencies": {
+    "@serverless-stack/cli": "0.44.1",
+    "@serverless-stack/resources": "0.44.1",
+    "@aws-cdk/core": "1.124.0"
+  }
+}
