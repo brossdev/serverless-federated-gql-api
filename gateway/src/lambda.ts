@@ -7,17 +7,17 @@ import {
 const managementServiceAPI = process.env.MANAGEMENT_SERVICE_API,
 const accountServiceAPI = process.env.ACCOUNT_SERVICE_API,
 
-const typeDefs = gql`
-  type Query {
-      hello: String
-  }
-  `;
-
-  const resolvers = {
-      Query: {
-          hello: () => "Hello, World!",
-      },
-  };
+//const typeDefs = gql`
+//  type Query {
+//      hello: String
+//  }
+//  `;
+//
+//  const resolvers = {
+//      Query: {
+//          hello: () => "Hello, World!",
+//      },
+//  };
 
 
   const gateway = new ApolloGateway({
