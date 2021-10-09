@@ -5,9 +5,9 @@ export default class MyStack extends sst.Stack {
     super(scope, id, props);
 
     // Create a HTTP API
-    const api = new sst.Api(this, "Api", {
+    const api = new sst.Api(this, "ManagementApi", {
       routes: {
-        "GET /": "src",
+        "$default": "src",
       }
     });
 
