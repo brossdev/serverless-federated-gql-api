@@ -4,8 +4,8 @@ import {
     ApolloServerPluginLandingPageGraphQLPlayground
 } from "apollo-server-core";
 
-const managementServiceAPI = process.env.MANAGEMENT_SERVICE_API,
-const accountServiceAPI = process.env.ACCOUNT_SERVICE_API,
+const managementServiceAPI = process.env.MANAGEMENT_SERVICE_API
+const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
 
 //const typeDefs = gql`
 //  type Query {
@@ -28,7 +28,7 @@ const accountServiceAPI = process.env.ACCOUNT_SERVICE_API,
   })
 
   const server = new ApolloServer({
-      gateway
+      gateway,
       plugins: [
           ApolloServerPluginLandingPageGraphQLPlayground(),
       ],
