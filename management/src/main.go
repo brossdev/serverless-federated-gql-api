@@ -8,8 +8,8 @@ import (
     "github.com/aws/aws-lambda-go/lambda"
     ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
     "github.com/gin-gonic/gin"
-    "main/graph"
-    "main/graph/generated"
+    "management/graph"
+    "management/graph/generated"
     "log"
 )
 

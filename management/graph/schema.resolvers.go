@@ -4,22 +4,41 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"context"
-	"fmt"
-	"main/graph/generated"
-	"main/graph/model"
+    "context"
+    "fmt"
+    "github.com/aws/aws-sdk-go/aws/session"
+    "github.com/aws/aws-sdk-go/service/dynamodb"
+    "management/graph/generated"
+    "management/graph/model"
+    "management/internal/users"
 )
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.NewOrganisation) (*model.Organisation, error) {
-	panic(fmt.Errorf("not implemented"))
+    panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+    panic(fmt.Errorf("not implemented"))
+    sess := session.Must(session.NewSessionWithOptions(session.Options{
+        SharedConfigState: session.SharedConfigEnable,
+    }))
+
+    // Create DynamoDB client
+    ddb := dynamodb.New(sess)
+
+    user, err := users.GetUser(ctx, ddb, "test", "1")
+
+    if err != nil {
+        fmt.Println("Broke")
+    }
+
+    return user, nil
+
 }
 
+
 func (r *queryResolver) GetOrganisation(ctx context.Context, organisationID string) (*model.Organisation, error) {
-	panic(fmt.Errorf("not implemented"))
+    panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

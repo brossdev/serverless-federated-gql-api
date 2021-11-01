@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"main/graph"
-	"main/graph/generated"
+	"management/graph"
+	"management/graph/generated"
 	"net/http"
 	"os"
 

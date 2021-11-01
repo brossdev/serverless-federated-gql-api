@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"main/graph/model"
+	"management/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"
