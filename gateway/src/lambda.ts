@@ -1,11 +1,12 @@
-import { gql, ApolloServer } from "apollo-server-lambda";
+import { ApolloServer } from "apollo-server-lambda";
 import { ApolloGateway } from "@apollo/gateway";
 import {
     ApolloServerPluginLandingPageGraphQLPlayground
 } from "apollo-server-core";
 
+console.log({env: process.env})
 const managementServiceAPI = process.env.MANAGEMENT_SERVICE_API
-const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
+//const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
 
 //const typeDefs = gql`
 //  type Query {
@@ -23,7 +24,7 @@ const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
   const gateway = new ApolloGateway({
       serviceList: [
           { name: 'management', url: managementServiceAPI },
-          { name: 'account', url: accountServiceAPI }
+ //         { name: 'account', url: accountServiceAPI }
       ]
   })
 
