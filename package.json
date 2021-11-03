@@ -1,0 +1,21 @@
+{
+  "name": "sls-gql-fed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "./gateway",
+    "./management"
+  ],
+  "scripts": {
+    "federation": "concurrently -k npm:federation:*",
+    "federation:management": "npm run start -w management",
+    "federation:gateway": "npm run start -w gateway"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^6.3.0"
+  }
+}
