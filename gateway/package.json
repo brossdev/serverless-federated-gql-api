@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "sst test",
-    "start": "sst start",
+    "start": "sst start --port 12578",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove"

@@ -50,6 +50,7 @@ func Handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
                 "message": "pong",
             })
         })
+        r.GET("/graphql", graphqlHandler())
 
         ginLambda = ginadapter.NewV2(r)
     }

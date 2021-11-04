@@ -5,7 +5,7 @@ import {
 } from "apollo-server-core";
 
 console.log({env: process.env})
-const managementServiceAPI = process.env.MANAGEMENT_SERVICE_API
+const managementServiceAPI = `${process.env.MANAGEMENT_SERVICE_API}/graphql`
 //const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
 
 //const typeDefs = gql`

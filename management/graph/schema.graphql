@@ -2,13 +2,13 @@
 #
 # https://gqlgen.com/getting-started/
 
-type User {
+type User @key(fields: "id"){
   id: ID!
   firstName: String!
   lastName: String!
 }
 
-type Organisation {
+type Organisation @key(fields: "id"){
   id: ID!
   name: String!
 }

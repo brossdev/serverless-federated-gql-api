@@ -11,8 +11,12 @@ type Organisation struct {
 	Name string `json:"name"`
 }
 
+func (Organisation) IsEntity() {}
+
 type User struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 }
+
+func (User) IsEntity() {}
