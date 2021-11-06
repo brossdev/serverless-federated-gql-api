@@ -1,4 +1,5 @@
 import * as sst from "@serverless-stack/resources";
+import AuthStack from './Auth';
 import DataStoreStack from "./DataStore";
 import GatewayStack from "./Gateway";
 
@@ -8,7 +9,11 @@ export default function main(app: sst.App): void {
       runtime: "nodejs14.x",
   });
     
-  new DataStoreStack(app, "data-store")
-  new GatewayStack(app, "gateway");
+  const dataStore = new DataStoreStack(app, "data-store")
+  const gateway = new GatewayStack(app, "gateway");
+  new AuthStack(app, "auth", {
+      apolloGateway: gateway.api,
+      table: dataStore.table,
+  })
 
 }
