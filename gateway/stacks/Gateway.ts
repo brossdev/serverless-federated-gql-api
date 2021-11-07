@@ -8,6 +8,7 @@ export default class GatewayStack extends sst.Stack {
     // Create a Apollo GraphQL API
      this.api = new sst.ApolloApi(this, "ApolloApi", {
       server: "src/lambda.handler",
+      defaultAuthorizationType: sst.ApiAuthorizationType.AWS_IAM, 
       defaultFunctionProps: {
           environment: {
               MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API,

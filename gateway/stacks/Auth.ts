@@ -1,12 +1,12 @@
 import * as sst from "@serverless-stack/resources";
 
-interface DataStoreProps extends sst.StackProps {
+interface AuthStackProps extends sst.StackProps {
     readonly apolloGateway: sst.ApolloApi;
     readonly table: sst.Table;
 }
 
-export default class DataStore extends sst.Stack {
-    constructor(scope: sst.App, id: string, props: DataStoreProps) {
+export default class AuthStack extends sst.Stack {
+    constructor(scope: sst.App, id: string, props: AuthStackProps) {
         super(scope, id, props);
 
         const { apolloGateway, table } = props;
@@ -17,6 +17,15 @@ export default class DataStore extends sst.Stack {
             cognito: {
                 userPool: {
                     signInAliases: { email: true },
+                },
+                triggers: {
+                    postConfirmation: {
+                        handler:"src/triggers/post-confirmation.ts",
+                        environment: {
+                            TABLE_NAME: table.tableName,
+                        } 
+                    }
+
                 }
             }
         });
