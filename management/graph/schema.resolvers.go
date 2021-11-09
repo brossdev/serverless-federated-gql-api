@@ -17,12 +17,10 @@ import (
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.NewOrganisation) (*model.Organisation, error) {
 	tableName := ctx.Value("TABLE_NAME").(string)
-	fmt.Println(tableName)
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	// Create DynamoDB client
 	ddb := dynamodb.New(sess)
 
 	org, err := organisations.CreateOrganisation(ctx, ddb, tableName, *input)
@@ -37,14 +35,11 @@ func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
 
 	tableName := ctx.Value("TABLE_NAME").(string)
-	// fmt.Printf("context ------- %v", ctx)
-	fmt.Println(tableName)
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
-	// Create DynamoDB client
 	ddb := dynamodb.New(sess)
 
 	user, err := users.GetUser(ctx, ddb, tableName, "bobby.test@bobbyross.dev")

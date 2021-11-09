@@ -1,19 +1,19 @@
 import * as sst from "@serverless-stack/resources";
 
 export default class GatewayStack extends sst.Stack {
-    public readonly api: sst.ApolloApi;
+  public readonly api: sst.ApolloApi;
   constructor(scope: sst.App, id: string, props?: sst.StackProps) {
     super(scope, id, props);
 
     // Create a Apollo GraphQL API
-     this.api = new sst.ApolloApi(this, "ApolloApi", {
+    this.api = new sst.ApolloApi(this, "ApolloApi", {
       server: "src/lambda.handler",
-      defaultAuthorizationType: sst.ApiAuthorizationType.AWS_IAM, 
+      // defaultAuthorizationType: sst.ApiAuthorizationType.AWS_IAM,
       defaultFunctionProps: {
-          environment: {
-              MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API,
-          }
-      }
+        environment: {
+          MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API,
+        },
+      },
     });
 
     // Show the endpoint in the output

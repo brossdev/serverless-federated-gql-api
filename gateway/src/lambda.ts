@@ -1,39 +1,17 @@
-import {gql, ApolloServer } from "apollo-server-lambda";
+import { ApolloServer } from "apollo-server-lambda";
+import fs from "fs";
 import { ApolloGateway } from "@apollo/gateway";
-import {
-    ApolloServerPluginLandingPageGraphQLPlayground
-} from "apollo-server-core";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 
-const managementServiceAPI = `${process.env.MANAGEMENT_SERVICE_API}/graphql`
-//const accountServiceAPI = process.env.ACCOUNT_SERVICE_API
+const supergraphSdl = fs.readFileSync("../dev-schema.graphql").toString();
 
-const typeDefs = gql`
-  type Query {
-      hello: String
-  }
-  `;
+const gateway = new ApolloGateway({
+  supergraphSdl,
+});
 
-  const resolvers = {
-      Query: {
-          hello: () => "Hello, World!",
-      },
-  };
+const server = new ApolloServer({
+  gateway,
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+});
 
-
-  //const gateway = new ApolloGateway({
-  //    serviceList: [
-  //        { name: 'management', url: managementServiceAPI },
- ////         { name: 'account', url: accountServiceAPI }
-  //    ]
-  //})
-
-  const server = new ApolloServer({
-      resolvers,
-      typeDefs,
-      // gateway,
-      plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(),
-      ],
-  });
-
-  export const handler = server.createHandler();
+export const handler = server.createHandler();
