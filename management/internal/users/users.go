@@ -3,6 +3,7 @@ package users
 import (
     "fmt"
     "context"
+    "log"
 
     "management/graph/model"
     "github.com/aws/aws-sdk-go/aws"
@@ -29,7 +30,9 @@ func GetUser( ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, ema
     }
 
     result, err := ddb.GetItemWithContext(ctx, input)
+    log.Printf("result: %v", result)
     if err != nil {
+        log.Printf("err: %v", err)
         return nil, err
     }
 
