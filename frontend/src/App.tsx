@@ -1,12 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+const AuthenticatedApp = React.lazy(() => import('./authenticated-app'));
+const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
+
 function App() {
+    const user = false;
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
@@ -19,6 +21,11 @@ function App() {
           Learn React
         </a>
       </header>
+        <React.Suspense fallback={<div>Loading...</div>}>
+        <main>
+            {user ? <AuthenticatedApp/> : <UnAuthenticatedApp />}
+        </main>
+            </React.Suspense>
     </div>
   );
 }
