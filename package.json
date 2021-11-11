@@ -8,7 +8,7 @@
     "./management"
   ],
   "scripts": {
-    "federation": "concurrently -k npm:federation:*",
+    "federation": "concurrently -c \"#4EABD4,#3B22B3\" -k npm:federation:*",
     "federation:management": "npm run start -w management",
     "federation:gateway": "npm run start -w gateway"
   },
