@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 
-const AuthenticatedApp = React.lazy(() => import('./authenticated-app'));
+const AuthenticatedApp = React.lazy(/* webpackPrefetch: true */ () => import('./authenticated-app'));
 const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
 function App() {
-    const user = false;
+    const user = true;
   return (
     <div className="App">
       <header className="App-header">
