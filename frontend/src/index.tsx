@@ -5,8 +5,6 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-console.log({ env: process.env });
-
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
