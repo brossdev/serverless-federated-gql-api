@@ -11,7 +11,7 @@
   "scripts": {
     "federation": "concurrently -c \"#4EABD4,#3B22B3\" -k npm:federation:*",
     "federation:management": "npm run start -w management",
-    "federation:gateway": "npm run start -w gateway",
+    "federation:gateway": "rover supergraph compose --config .supergraph.yaml > dev-schema.graphql && npm run start -w gateway",
     "federation:frontend": "npm run start -w frontend"
   },
   "keywords": [],
