@@ -16,6 +16,8 @@
   "dependencies": {
     "@apollo/federation": "^0.33.0",
     "@apollo/gateway": "^0.42.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "1.126.0",
+    "@aws-cdk/aws-cognito": "1.126.0",
     "@aws-cdk/aws-iam": "1.126.0",
     "@aws-cdk/core": "1.126.0",
     "@aws-sdk/client-dynamodb": "^3.40.0",

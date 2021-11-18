@@ -5,7 +5,7 @@ export default class DataStore extends sst.Stack {
   constructor(scope: sst.App, id: string, props?: sst.StackProps) {
     super(scope, id, props);
 
-    this.table = new sst.Table(this, "sls-gql", {
+    this.table = new sst.Table(this, "database", {
       fields: {
         PK: sst.TableFieldType.STRING,
         SK: sst.TableFieldType.STRING,

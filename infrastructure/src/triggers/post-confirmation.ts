@@ -9,8 +9,8 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     const {
       email = "test",
       sub,
-      firstName = "test",
-      lastName = "test",
+      given_name: firstName = "test",
+      family_name: lastName = "test",
     } = event.request.userAttributes;
     console.log({ sub });
 
