@@ -32,8 +32,7 @@ func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.
 	return org, nil
 }
 
-func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
-
+func (r *queryResolver) GetCurrentUser(ctx context.Context) (*model.User, error) {
 	tableName := ctx.Value("TABLE_NAME").(string)
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{

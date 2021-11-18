@@ -61,7 +61,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		CurrentUser        func(childComplexity int) int
+		GetCurrentUser     func(childComplexity int) int
 		GetOrganisation    func(childComplexity int, organisationID string) int
 		__resolve__service func(childComplexity int) int
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
@@ -86,7 +86,7 @@ type MutationResolver interface {
 	CreateOrganisation(ctx context.Context, input *model.NewOrganisation) (*model.Organisation, error)
 }
 type QueryResolver interface {
-	CurrentUser(ctx context.Context) (*model.User, error)
+	GetCurrentUser(ctx context.Context) (*model.User, error)
 	GetOrganisation(ctx context.Context, organisationID string) (*model.Organisation, error)
 }
 
@@ -155,12 +155,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organisation.Name(childComplexity), true
 
-	case "Query.currentUser":
-		if e.complexity.Query.CurrentUser == nil {
+	case "Query.getCurrentUser":
+		if e.complexity.Query.GetCurrentUser == nil {
 			break
 		}
 
-		return e.complexity.Query.CurrentUser(childComplexity), true
+		return e.complexity.Query.GetCurrentUser(childComplexity), true
 
 	case "Query.getOrganisation":
 		if e.complexity.Query.GetOrganisation == nil {
@@ -305,7 +305,7 @@ input NewOrganisation {
 }
 
 type Query {
-  currentUser: User!
+  getCurrentUser: User!
   getOrganisation(organisationId: ID!): Organisation!
 }
 
@@ -674,7 +674,7 @@ func (ec *executionContext) _Organisation_name(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_currentUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getCurrentUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -692,7 +692,7 @@ func (ec *executionContext) _Query_currentUser(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CurrentUser(rctx)
+		return ec.resolvers.Query().GetCurrentUser(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2344,7 +2344,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "currentUser":
+		case "getCurrentUser":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -2352,7 +2352,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_currentUser(ctx, field)
+				res = ec._Query_getCurrentUser(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
