@@ -1,7 +1,35 @@
 import React from "react";
 import Auth from "@aws-amplify/auth";
 import { AuthContext } from "./contexts/auth-context";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  HttpLink,
+  from,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import "./App.css";
+
+const httpLink = new HttpLink({
+  uri: process.env.REACT_APP_API_URL,
+  credentials: "include",
+});
+
+const authMiddleware = setContext(async (_, { headers }) => {
+  const jwtToken = (await Auth.currentSession()).getAccessToken().getJwtToken();
+  return {
+    headers: {
+      ...headers,
+      authorization: jwtToken,
+    },
+  };
+});
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: from([authMiddleware, httpLink]),
+});
 
 const AuthenticatedApp = React.lazy(
   /* webpackPrefetch: true */ () => import("./authenticated-app")
@@ -37,7 +65,9 @@ function App() {
         <main>
           {user ? (
             <AuthContext.Provider value={user}>
-              <AuthenticatedApp />
+              <ApolloProvider client={client}>
+                <AuthenticatedApp />
+              </ApolloProvider>
             </AuthContext.Provider>
           ) : (
             <UnAuthenticatedApp />

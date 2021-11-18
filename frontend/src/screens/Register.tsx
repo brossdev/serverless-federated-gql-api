@@ -4,6 +4,8 @@ import { getErrorMessage } from "../lib/error-lib";
 
 const Register = () => {
   const [email, setEmail] = React.useState("");
+  const [givenName, setGivenName] = React.useState("");
+  const [familyName, setFamilyName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [confirmationCode, setConfirmationCode] = React.useState("");
@@ -11,7 +13,11 @@ const Register = () => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const validateForm = () =>
-    email.length > 0 && password.length > 0 && password === confirmPassword;
+    email.length > 0 &&
+    password.length > 0 &&
+    password === confirmPassword &&
+    familyName !== "" &&
+    givenName !== "";
 
   const validateConfirmationCode = () => confirmationCode.length > 0;
 
@@ -23,6 +29,11 @@ const Register = () => {
       const newUser = await Auth.signUp({
         username: email,
         password,
+        attributes: {
+          given_name: givenName,
+          family_name: familyName,
+          email,
+        },
       });
       setNewUser(newUser);
     } catch (error) {
@@ -83,6 +94,24 @@ const Register = () => {
           type="email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
+          required
+        />
+        <label htmlFor="givenName">First Name</label>
+        <input
+          id="givenName"
+          placeholder="your given name"
+          type="text"
+          onChange={(e) => setGivenName(e.target.value)}
+          value={givenName}
+          required
+        />
+        <label htmlFor="familyName">Family Name</label>
+        <input
+          id="familyName"
+          placeholder="your family name"
+          type="text"
+          onChange={(e) => setFamilyName(e.target.value)}
+          value={familyName}
           required
         />
         <label htmlFor="password">password</label>

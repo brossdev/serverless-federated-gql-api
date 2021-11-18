@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.4.17",
     "@aws-amplify/auth": "^4.3.14",
     "@aws-amplify/core": "^4.3.6",
     "@testing-library/jest-dom": "^5.15.0",
@@ -13,6 +14,7 @@
     "@types/node": "^12.20.37",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
+    "graphql": "^15.7.2",
     "history": "^5.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
