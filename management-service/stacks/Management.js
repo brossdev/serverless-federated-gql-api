@@ -1,5 +1,7 @@
 import * as sst from "@serverless-stack/resources";
 import * as iam from "@aws-cdk/aws-iam";
+// import { CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import * as apigAuthorizers from "@aws-cdk/aws-apigatewayv2-authorizers";
 
 export default class ManagementStack extends sst.Stack {
     constructor(scope, id, props) {
@@ -8,8 +10,16 @@ export default class ManagementStack extends sst.Stack {
         const AWS_ACCOUNT_ID = sst.Stack.of(this).account
         const AWS_REGION = sst.Stack.of(this).region
         const tableName = process.env.TABLE_NAME;
-        // Create a HTTP API
+        const userPoolId = process.env.USERPOOL_ID;
+        const userPoolClientId = process.env.USERPOOL_CLIENT_ID;
+
         const api = new sst.Api(this, "ManagementApi", {
+            defaultAuthorizer: new apigAuthorizers.HttpJwtAuthorizer({
+                identitySource: ["$request.header.authorization"],
+                jwtAudience: [userPoolClientId],
+                jwtIssuer: `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userPoolId}`
+            }),
+            defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
             routes: {
                 "$default": {
 

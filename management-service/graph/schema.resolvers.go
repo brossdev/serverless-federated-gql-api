@@ -34,6 +34,7 @@ func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.
 
 func (r *queryResolver) GetCurrentUser(ctx context.Context) (*model.User, error) {
 	tableName := ctx.Value("TABLE_NAME").(string)
+	userId := ctx.Value("user").(string)
 
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -41,7 +42,7 @@ func (r *queryResolver) GetCurrentUser(ctx context.Context) (*model.User, error)
 
 	ddb := dynamodb.New(sess)
 
-	user, err := users.GetUser(ctx, ddb, tableName, "bobby.test@bobbyross.dev")
+	user, err := users.GetUser(ctx, ddb, tableName, userId)
 
 	if err != nil {
 		fmt.Println("Broke")

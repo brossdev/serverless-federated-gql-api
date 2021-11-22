@@ -13,10 +13,11 @@ import (
 )
 
 // GetUser returns a user when given a valid dynamodb instance and valid email address
-func GetUser( ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, email string ) (*model.User, error) {
-    userKey := fmt.Sprintf("USER#%s", email)
+func GetUser( ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, ID string ) (*model.User, error) {
+    userKey := fmt.Sprintf("ACCOUNT#%s", ID)
     user := &model.User{}
 
+    log.Println(userKey)
     input := &dynamodb.GetItemInput{
         TableName: aws.String(tableName),
         Key: map[string]*dynamodb.AttributeValue{
