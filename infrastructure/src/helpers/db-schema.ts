@@ -12,11 +12,12 @@ export const DB_MAP = {
   USER: {
     putInput: ({ email, sub, firstName, lastName }: UserType) =>
       marshall({
-        PK: `ACCOUNT#${email}`,
-        SK: `ACCOUNT#${email}`,
+        PK: `ACCOUNT#${sub}`,
+        SK: `ACCOUNT#${sub}`,
         firstName,
         lastName,
         sub,
+        email,
       }),
   },
 };
