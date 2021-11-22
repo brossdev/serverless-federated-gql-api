@@ -11,6 +11,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
 )
@@ -19,19 +21,23 @@ var ginLambda *ginadapter.GinLambdaV2
 
 // Defining the Graphql handler
 func graphqlHandler() gin.HandlerFunc {
+	tableName := os.Getenv("TABLE_NAME")
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+
+	ddb := dynamodb.New(sess)
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: ddb, TableName: tableName}}))
 
 	return func(c *gin.Context) {
-		tableName := os.Getenv("TABLE_NAME")
 		// placeholder until switch out to lambda authriser with decoded token
 		user := c.Request.Header.Get("user")
 		log.Printf("REQUEST USER --- %v", user)
-		ctx := context.WithValue(c.Request.Context(), "TABLE_NAME", tableName)
-		ctx2 := context.WithValue(ctx, "user", user)
+		ctx := context.WithValue(c.Request.Context(), "user", user)
 
-		c.Request = c.Request.WithContext(ctx2)
+		c.Request = c.Request.WithContext(ctx)
 		h.ServeHTTP(c.Writer, c.Request)
 	}
 }
