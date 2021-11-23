@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "workspaces": [
-    "./infrastructure",
-    "./management-service",
+    "core",
+    "services/*",
     "frontend"
   ],
   "scripts": {
-    "federation": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:federation:*",
-    "federation:management": "npm run start -w management-service",
-    "federation:infrastructure": "rover supergraph compose --config .supergraph.yaml > dev-schema.graphql && npm run start -w infrastructure",
-    "federation:frontend": "npm run start -w frontend"
+    "services": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:services:*",
+    "services:management": "npm run start -w services/management",
+    "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
+    "frontend": "npm run start -w frontend"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,6 @@
     "concurrently": "^6.3.0"
   },
   "devDependencies": {
-    "@apollo/rover": "^0.4.0"
+    "@apollo/rover": "^0.4.1"
   }
 }
