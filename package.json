@@ -5,12 +5,12 @@
   "main": "index.js",
   "workspaces": [
     "core",
-    "services/*",
+    "subgraphs/*",
     "frontend"
   ],
   "scripts": {
-    "services": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:services:*",
-    "services:management": "npm run start -w services/management",
+    "subgraphs": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:subgraphs:*",
+    "subgraphs:management": "npm run start -w subgraphs/management",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
     "frontend": "npm run start -w frontend"
   },
