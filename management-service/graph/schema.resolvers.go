@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 	"management/graph/generated"
 	"management/graph/model"
 	"management/internal/organisations"
@@ -33,16 +34,11 @@ func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.
 }
 
 func (r *queryResolver) GetCurrentUser(ctx context.Context) (*model.User, error) {
-	tableName := ctx.Value("TABLE_NAME").(string)
 	userId := ctx.Value("user").(string)
 
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	log.Println((userId))
 
-	ddb := dynamodb.New(sess)
-
-	user, err := users.GetUser(ctx, ddb, tableName, userId)
+	user, err := users.GetUser(ctx, r.DB, r.TableName, userId)
 
 	if err != nil {
 		fmt.Println("Broke")
