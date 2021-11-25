@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "jest test",
-    "start": "sst start --port 12578",
+    "start": "sst start --port 12577",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove"
@@ -16,6 +16,7 @@
   "dependencies": {
     "@apollo/federation": "^0.33.0",
     "@apollo/gateway": "^0.42.0",
+    "@aws-cdk/aws-apigatewayv2": "1.126.0",
     "@aws-cdk/aws-apigatewayv2-authorizers": "1.126.0",
     "@aws-cdk/aws-cognito": "1.126.0",
     "@aws-cdk/aws-iam": "1.126.0",
@@ -25,11 +26,12 @@
     "@serverless-stack/cli": "0.50.2",
     "@serverless-stack/resources": "0.50.2",
     "apollo-server-core": "^3.3.0",
-    "apollo-server-lambda": "^3.3.0"
+    "apollo-server-lambda": "^3.3.0",
+    "aws-lambda": "^1.0.7"
   },
   "eslintConfig": {
     "extends": [
-      "serverless-stack"
+      "../.eslintrc.js"
     ]
   }
 }

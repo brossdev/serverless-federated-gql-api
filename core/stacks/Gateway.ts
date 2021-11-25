@@ -10,7 +10,8 @@ interface GatewayStackProps extends sst.StackProps {
 
 export default class GatewayStack extends sst.Stack {
   public readonly api: sst.ApolloApi;
-  constructor(scope: sst.App, id: string, props?: GatewayStackProps) {
+
+  constructor(scope: sst.App, id: string, props: GatewayStackProps) {
     super(scope, id, props);
 
     const { table } = props;
@@ -80,7 +81,7 @@ export default class GatewayStack extends sst.Stack {
       },
       defaultFunctionProps: {
         environment: {
-          MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API,
+          MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API ?? '',
         },
       },
     });
