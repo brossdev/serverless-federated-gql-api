@@ -8,19 +8,19 @@ type CognitoError = {
 
 function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "message" in error &&
-    typeof (error as Record<string, unknown>).message === "string"
+    'message' in error &&
+    typeof (error as Record<string, unknown>).message === 'string'
   );
 }
 
 function isCognitoError(error: unknown): error is CognitoError {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "name" in error &&
-    typeof (error as Record<string, unknown>).name === "string"
+    'name' in error &&
+    typeof (error as Record<string, unknown>).name === 'string'
   );
 }
 

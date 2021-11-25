@@ -1,19 +1,19 @@
-import React from "react";
-import Auth from "@aws-amplify/auth";
-import { AuthContext } from "./contexts/auth-context";
+import React from 'react';
+import Auth from '@aws-amplify/auth';
+import { AuthContext } from './contexts/auth-context';
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   HttpLink,
   from,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import "./App.css";
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import './App.css';
 
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_API_URL,
-  credentials: "include",
+  credentials: 'include',
 });
 
 const authMiddleware = setContext(async (_, { headers }) => {
@@ -32,9 +32,9 @@ const client = new ApolloClient({
 });
 
 const AuthenticatedApp = React.lazy(
-  /* webpackPrefetch: true */ () => import("./authenticated-app")
+  /* webpackPrefetch: true */ () => import('./authenticated-app'),
 );
-const UnAuthenticatedApp = React.lazy(() => import("./unauthenticated-app"));
+const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
 function App() {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
@@ -45,7 +45,7 @@ function App() {
       const authUser = await Auth.currentAuthenticatedUser();
       setUser(authUser);
     } catch (error) {
-      if (error !== "No current User") {
+      if (error !== 'No current User') {
         console.log({ error });
       }
     } finally {

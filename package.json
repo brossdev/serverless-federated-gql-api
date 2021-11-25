@@ -4,23 +4,38 @@
   "description": "",
   "main": "index.js",
   "workspaces": [
-    "./infrastructure",
-    "./management-service",
+    "core",
+    "subgraphs/*",
     "frontend"
   ],
   "scripts": {
-    "federation": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:federation:*",
-    "federation:management": "npm run start -w management-service",
-    "federation:infrastructure": "rover supergraph compose --config .supergraph.yaml > dev-schema.graphql && npm run start -w infrastructure",
-    "federation:frontend": "npm run start -w frontend"
+    "subgraphs": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:subgraph:*",
+    "subgraph:management": "npm run start -w subgraphs/management",
+    "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
+    "frontend": "npm run start -w frontend",
+    "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
+    "type-check": "tsc -b",
+    "validate": "scripts/validate",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache \"**/*.+(tsx|ts|js|jsx)\"",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "concurrently": "^6.3.0"
-  },
   "devDependencies": {
-    "@apollo/rover": "^0.4.0"
+    "@apollo/rover": "^0.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "concurrently": "^6.3.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.1",
+    "eslint-config-airbnb-typescript": "^16.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.2",
+    "prettier": "^2.4.1"
   }
 }
