@@ -1,6 +1,5 @@
 import * as sst from '@serverless-stack/resources';
 import * as iam from '@aws-cdk/aws-iam';
-// import { CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
 
 export default class ManagementStack extends sst.Stack {

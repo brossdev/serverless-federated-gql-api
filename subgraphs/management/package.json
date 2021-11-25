@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "sst test",
-    "start": "sst start",
+    "start": "sst start --port 12578",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove"
@@ -15,11 +15,13 @@
   "dependencies": {
     "@aws-cdk/core": "1.126.0",
     "@serverless-stack/cli": "0.50.2",
-    "@serverless-stack/resources": "0.50.2"
+    "@serverless-stack/resources": "0.50.2",
+    "@aws-cdk/aws-iam": "1.126.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "1.126.0"
   },
   "eslintConfig": {
     "extends": [
-      "serverless-stack"
+      "../../.eslintrc.js"
     ]
   }
 }
