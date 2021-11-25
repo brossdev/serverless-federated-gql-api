@@ -12,15 +12,19 @@
     "subgraphs": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:subgraphs:*",
     "subgraphs:management": "npm run start -w subgraphs/management",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
-    "frontend": "npm run start -w frontend"
+    "frontend": "npm run start -w frontend",
+    "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
+    "type-check": "tsc -b",
+    "validate": "scripts/validate",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "concurrently": "^6.3.0"
-  },
   "devDependencies": {
-    "@apollo/rover": "^0.4.1"
+    "@apollo/rover": "^0.4.1",
+    "concurrently": "^6.3.0",
+    "husky": "^7.0.4",
+    "prettier": "^2.4.1"
   }
 }

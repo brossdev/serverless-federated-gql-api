@@ -1,10 +1,7 @@
 import React from 'react';
 
-
 const Dashboard = () => {
-    return (
-        <div>Hello From Authenticated Dashboard</div>
-    )
-}
+  return <div>Hello From Authenticated Dashboard</div>;
+};
 
-export default Dashboard
+export default Dashboard;

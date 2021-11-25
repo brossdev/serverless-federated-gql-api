@@ -1,14 +1,14 @@
-import React from "react";
-import Auth from "@aws-amplify/auth";
-import { getErrorMessage } from "../lib/error-lib";
+import React from 'react';
+import Auth from '@aws-amplify/auth';
+import { getErrorMessage } from '../lib/error-lib';
 
 const Register = () => {
-  const [email, setEmail] = React.useState("");
-  const [givenName, setGivenName] = React.useState("");
-  const [familyName, setFamilyName] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [confirmationCode, setConfirmationCode] = React.useState("");
+  const [email, setEmail] = React.useState('');
+  const [givenName, setGivenName] = React.useState('');
+  const [familyName, setFamilyName] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [confirmationCode, setConfirmationCode] = React.useState('');
   const [newUser, setNewUser] = React.useState<unknown>(null); // placeholder until i can source amplify types
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -16,8 +16,8 @@ const Register = () => {
     email.length > 0 &&
     password.length > 0 &&
     password === confirmPassword &&
-    familyName !== "" &&
-    givenName !== "";
+    familyName !== '' &&
+    givenName !== '';
 
   const validateConfirmationCode = () => confirmationCode.length > 0;
 
@@ -38,7 +38,7 @@ const Register = () => {
       setNewUser(newUser);
     } catch (error) {
       const errMessage = getErrorMessage(error);
-      if (errMessage === "UsernameExistsException") {
+      if (errMessage === 'UsernameExistsException') {
         const user = await Auth.resendSignUp(email);
         setNewUser(user);
       } else {

@@ -1,21 +1,21 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useQuery } from "@apollo/client";
-import Nav from "./components/Nav";
-import Dashboard from "./screens/Dashboard";
-import Customers from "./screens/Customers";
-import Accounts from "./screens/Accounts";
-import Vendors from "./screens/Vendors";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
+import Nav from './components/Nav';
+import Dashboard from './screens/Dashboard';
+import Customers from './screens/Customers';
+import Accounts from './screens/Accounts';
+import Vendors from './screens/Vendors';
 
-import CURRENT_USER_QUERY from "./api/graphql/queries/currentUser";
+import CURRENT_USER_QUERY from './api/graphql/queries/currentUser';
 
 const navLinks = [
   {
-    title: "accounts",
-    to: "/accounts",
+    title: 'accounts',
+    to: '/accounts',
   },
-  { title: "customers", to: "/customers" },
-  { title: "vendors", to: "/vendors" },
+  { title: 'customers', to: '/customers' },
+  { title: 'vendors', to: '/vendors' },
 ];
 
 const AuthenticatedApp = () => {

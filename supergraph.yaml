@@ -1,0 +1,5 @@
+subgraphs:
+  management:
+    routing_url: https://??????????.execute-api.eu-west-1.amazonaws.com/query
+    schema:
+      file: ./subgraphs/management/graph/schema.graphql

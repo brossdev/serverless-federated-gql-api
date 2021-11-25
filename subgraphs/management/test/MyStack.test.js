@@ -1,14 +1,14 @@
-import { expect, haveResource } from "@aws-cdk/assert";
-import * as sst from "@serverless-stack/resources";
-import MyStack from "../stacks/MyStack";
+import { expect, haveResource } from '@aws-cdk/assert';
+import * as sst from '@serverless-stack/resources';
+import MyStack from '../stacks/MyStack';
 
-test("Test Stack", () => {
+test('Test Stack', () => {
   const app = new sst.App();
   app.setDefaultFunctionProps({
-    runtime: "go1.x"
+    runtime: 'go1.x',
   });
   // WHEN
-  const stack = new MyStack(app, "test-stack");
+  const stack = new MyStack(app, 'test-stack');
   // THEN
-  expect(stack).to(haveResource("AWS::Lambda::Function"));
+  expect(stack).to(haveResource('AWS::Lambda::Function'));
 });
