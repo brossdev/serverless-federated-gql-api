@@ -9,9 +9,10 @@ interface NavLink {
 interface NavProps {
   navLinks: NavLink[];
   user: { firstName: string; lastName: string };
+  logout(): void;
 }
 const Nav = (props: NavProps) => {
-  const { navLinks, user } = props;
+  const { navLinks, user, logout } = props;
   console.log({ user });
   return (
     <nav>
@@ -23,6 +24,7 @@ const Nav = (props: NavProps) => {
           </li>
         ))}
       </ul>
+      <button onClick={logout}>Sign Out</button>
     </nav>
   );
 };

@@ -9,6 +9,10 @@ import Vendors from './screens/Vendors';
 
 import CURRENT_USER_QUERY from './api/graphql/queries/currentUser';
 
+type AuthAppProps = {
+  logout(): void;
+};
+
 const navLinks = [
   {
     title: 'accounts',
@@ -18,7 +22,7 @@ const navLinks = [
   { title: 'vendors', to: '/vendors' },
 ];
 
-const AuthenticatedApp = () => {
+const AuthenticatedApp = ({ logout }: AuthAppProps) => {
   const { loading, data: user, error } = useQuery(CURRENT_USER_QUERY);
 
   if (loading) return <p>Loading ...</p>;
@@ -26,7 +30,7 @@ const AuthenticatedApp = () => {
 
   return (
     <BrowserRouter>
-      <Nav navLinks={navLinks} user={user.getCurrentUser} />
+      <Nav navLinks={navLinks} user={user.getCurrentUser} logout={logout} />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/accounts" element={<Accounts />} />

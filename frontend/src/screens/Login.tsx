@@ -1,4 +1,5 @@
 import React from 'react';
+import Auth from '@aws-amplify/auth';
 
 const Login = () => {
   const [email, setEmail] = React.useState('');
@@ -14,6 +15,7 @@ const Login = () => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+    Auth.signIn(email, password);
   }
 
   if (error) return <div>Error, something is broken</div>;

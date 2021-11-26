@@ -1,6 +1,7 @@
 import React from 'react';
 import Auth from '@aws-amplify/auth';
 import { AuthContext } from './contexts/auth-context';
+import type { AuthUser } from './contexts/auth-context';
 import {
   ApolloClient,
   InMemoryCache,
@@ -38,7 +39,7 @@ const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
 function App() {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = React.useState<AuthUser | null>(null);
 
   async function onLoad() {
     try {
@@ -53,6 +54,11 @@ function App() {
     }
   }
 
+  const logout = React.useCallback(() => {
+    Auth.signOut();
+    setUser(null);
+  }, [setUser]);
+
   React.useEffect(() => {
     onLoad();
   }, []);
@@ -64,9 +70,9 @@ function App() {
       <React.Suspense fallback={<div>Loading...</div>}>
         <main>
           {user ? (
-            <AuthContext.Provider value={user}>
+            <AuthContext.Provider value={{ user }}>
               <ApolloProvider client={client}>
-                <AuthenticatedApp />
+                <AuthenticatedApp logout={logout} />
               </ApolloProvider>
             </AuthContext.Provider>
           ) : (
