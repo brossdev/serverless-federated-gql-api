@@ -12,6 +12,11 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import './App.css';
 
+const AuthenticatedApp = React.lazy(
+  /* webpackPrefetch: true */ () => import('./authenticated-app'),
+);
+const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
+
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_API_URL,
   credentials: 'include',
@@ -31,11 +36,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: from([authMiddleware, httpLink]),
 });
-
-const AuthenticatedApp = React.lazy(
-  /* webpackPrefetch: true */ () => import('./authenticated-app'),
-);
-const UnAuthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
 function App() {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
