@@ -9,6 +9,7 @@ export type AuthChallengeName =
 
 export type AuthUser = CognitoUser & {
   challengeName: AuthChallengeName;
+  challengeParam: Record<string, unknown>;
 };
 
 interface IAuthContext {
