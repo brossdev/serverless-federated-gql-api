@@ -18,6 +18,7 @@ export const DB_MAP = {
         lastName,
         sub,
         email,
+        type: 'user',
       }),
   },
 };
