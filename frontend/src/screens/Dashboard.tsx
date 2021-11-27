@@ -7,7 +7,7 @@ const activeAccounts = [
     balance: 400000,
   },
   {
-    title: 'joint account',
+    title: 'suppliers',
     to: '/organisations',
     balance: 400000,
   },
@@ -18,9 +18,21 @@ const activeAccounts = [
   },
 ];
 
+const BookingSummary = () => (
+  <div>
+    <h2>Booking Summary</h2>
+    {activeAccounts.map((account) => (
+      <section>
+        <h3>{account.title}</h3>
+        <h4>{account.balance}</h4>
+      </section>
+    ))}
+  </div>
+);
+
 const AccountSummary = () => (
   <div>
-    <h2>Account Summary</h2>
+    <h2>Financial Summary</h2>
     {activeAccounts.map((account) => (
       <section>
         <h3>{account.title}</h3>
@@ -42,12 +54,26 @@ const CustomerSummary = () => (
   </div>
 );
 
+const VendorSummary = () => (
+  <div>
+    <h2>Vendor Summary</h2>
+    {activeAccounts.map((account) => (
+      <section>
+        <h3>{account.title}</h3>
+        <h4>{account.balance}</h4>
+      </section>
+    ))}
+  </div>
+);
+
 const Dashboard = () => {
   return (
     <div>
       <p>Your Dashboard</p>
+      <BookingSummary />
       <AccountSummary />
       <CustomerSummary />
+      <VendorSummary />
     </div>
   );
 };

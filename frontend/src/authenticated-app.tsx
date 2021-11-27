@@ -6,6 +6,7 @@ import Dashboard from './screens/Dashboard';
 import Customers from './screens/Customers';
 import Accounts from './screens/Accounts';
 import Vendors from './screens/Vendors';
+import Schedule from './screens/Schedule';
 
 import CURRENT_USER_QUERY from './api/graphql/queries/currentUser';
 
@@ -14,6 +15,10 @@ type AuthAppProps = {
 };
 
 const navLinks = [
+  {
+    title: 'schedule',
+    to: '/schedule',
+  },
   {
     title: 'accounts',
     to: '/accounts',
@@ -34,6 +39,7 @@ const AuthenticatedApp = ({ logout }: AuthAppProps) => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/accounts" element={<Accounts />} />
+        <Route path="/schedule" element={<Schedule />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/vendors" element={<Vendors />} />
       </Routes>
