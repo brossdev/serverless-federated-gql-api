@@ -11,23 +11,15 @@ import (
 	"management/graph/model"
 	"management/internal/organisations"
 	"management/internal/users"
-
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.NewOrganisation) (*model.Organisation, error) {
-	tableName := ctx.Value("TABLE_NAME").(string)
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
 
-	ddb := dynamodb.New(sess)
-
-	org, err := organisations.CreateOrganisation(ctx, ddb, tableName, *input)
+	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, *input)
 
 	if err != nil {
 		fmt.Println("Could not create new organisation")
+		return nil, err
 	}
 
 	return org, nil

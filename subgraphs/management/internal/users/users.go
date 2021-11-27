@@ -18,6 +18,7 @@ func GetUser(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, ID s
 	userKey := fmt.Sprintf("ACCOUNT#%s", ID)
 	user := &model.User{}
 
+	log.Println(tableName)
 	log.Println(userKey)
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),

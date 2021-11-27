@@ -26,6 +26,16 @@ func (m *mockDynamoDb) GetItemWithContext(ctx aws.Context, input *dynamodb.GetIt
 	return args.Get(0).(*dynamodb.GetItemOutput), args.Error(1)
 }
 
+func (m *mockDynamoDb) PutItemWithContext(ctx aws.Context, input *dynamodb.PutItemInput, opts ...request.Option) (*dynamodb.PutItemOutput, error) {
+	args := m.Called(input)
+	return args.Get(0).(*dynamodb.PutItemOutput), args.Error(1)
+}
+
+func (m *mockDynamoDb) UpdateItemWithContext(ctx aws.Context, input *dynamodb.UpdateItemInput, opts ...request.Option) (*dynamodb.UpdateItemOutput, error) {
+	args := m.Called(input)
+	return args.Get(0).(*dynamodb.UpdateItemOutput), args.Error(1)
+}
+
 func addContext(userID string) client.Option {
 	return func(bd *client.Request) {
 		ctx := context.WithValue(bd.HTTP.Context(), "user", userID)
@@ -49,6 +59,16 @@ func MockUserGetItemOutput(firstName, lastName, email string) *dynamodb.GetItemO
 	}
 }
 
+func MockOrgUpdateItemOutput(name string) *dynamodb.UpdateItemOutput {
+	return &dynamodb.UpdateItemOutput{
+		Attributes: map[string]*dynamodb.AttributeValue{
+			"name": {
+				S: &name,
+			},
+		},
+	}
+}
+
 func TestUser(t *testing.T) {
 	tableName := "test"
 	mockDB := mockDynamoDb{}
@@ -64,5 +84,22 @@ func TestUser(t *testing.T) {
 
 		assert.Equal(t, "bob", resp.GetCurrentUser.FirstName)
 		assert.Equal(t, "ross", resp.GetCurrentUser.LastName)
+	})
+}
+
+func TestOrganisation(t *testing.T) {
+	tableName := "test"
+	mockDB := mockDynamoDb{}
+	mockDB.Mock.On("UpdateItemWithContext", mock.Anything).Return(MockOrgUpdateItemOutput("naughtydog"), nil)
+
+	c := client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{DB: &mockDB, TableName: tableName}})))
+
+	t.Run("create organisation", func(t *testing.T) {
+		var resp struct {
+			CreateOrganisation *model.Organisation
+		}
+		c.MustPost(`mutation($input: NewOrganisation!) { createOrganisation(input: $input) { name } }`, &resp, client.Var("input", &model.NewOrganisation{Name: "naughtydog"}))
+
+		assert.Equal(t, "naughtydog", resp.CreateOrganisation.Name)
 	})
 }
