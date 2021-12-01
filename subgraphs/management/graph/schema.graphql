@@ -7,15 +7,19 @@ type User @key(fields: "id") {
   firstName: String!
   lastName: String!
   organisations: [Organisation]
+  createdAt: Date
 }
 
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
+  createdAt: Date
+  contactEmail: String
 }
 
-input NewOrganisation {
+input OrganisationInput {
   name: String!
+  contactEmail: String!
 }
 
 type Query {

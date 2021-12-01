@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"management/graph/model"
 
@@ -13,24 +14,150 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
-// CreateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters
-func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.NewOrganisation) (*model.Organisation, error) {
+type DBOrganisation struct {
+	*model.NewOrganisation
+	PK        string
+	SK        string
+	Type      string
+	CreatedAt string
+}
+
+type DBOrganisationMembership struct {
+	PK        string
+	SK        string
+	CreatedAt string
+	UserID    string
+	Role      string
+}
+
+type DBUserOrg struct {
+	Name string
+	Role string
+}
+
+func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.NewOrganisation) (*model.Organisation, error) {
+	// create organisation
 	orgKey := fmt.Sprintf("ACCOUNT#%s", organisation.Name)
-	newOrg, err := dynamodbattribute.MarshalMap(organisation)
+	createdAt := time.Now().Format("2021-12-01 17:06:06")
+	dbOrg := DBOrganisation{
+		&organisation,
+		orgKey,
+		orgKey,
+		"organisation",
+		createdAt,
+	}
+
+	newOrg, err := dynamodbattribute.MarshalMap(dbOrg)
 	log.Printf("Attrs: %v", newOrg)
 	if err != nil {
 		return nil, err
 	}
 
-	expressionNames := map[string]*string{
-		"#type": aws.String("type"),
+	createOrgInput := &dynamodb.Put{
+		TableName: aws.String(tableName),
+		Item:      newOrg,
 	}
-	expressionValues := map[string]*dynamodb.AttributeValue{
-		":type": {
-			S: aws.String("organisation"),
+
+	// create membership
+	membershipKey := fmt.Sprintf("MEMBERSHIP#%s", userID)
+
+	orgMembership := DBOrganisationMembership{
+		PK:     orgKey,
+		SK:     membershipKey,
+		UserID: userID,
+		Role:   "admin",
+	}
+
+	newMembership, err := dynamodbattribute.MarshalMap(orgMembership)
+
+	log.Printf("Membership Attrs: %v", newMembership)
+	if err != nil {
+		return nil, err
+	}
+
+	createMembershipInput := &dynamodb.Put{
+		TableName: aws.String(tableName),
+		Item:      newMembership,
+	}
+
+	// update user with organisation
+
+	userKey := fmt.Sprintf("ACCOUNT#%s", userID)
+
+	userOrgEntry := &DBUserOrg{
+		Name: organisation.Name,
+		Role: "admin",
+	}
+
+	userOrg, err := dynamodbattribute.MarshalMap(userOrgEntry)
+
+	log.Printf("User Org Attrs: %v", userOrg)
+	if err != nil {
+		return nil, err
+	}
+
+	updateUserOrgs := &dynamodb.Update{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"PK": {
+				S: aws.String(userKey),
+			},
+			"SK": {
+				S: aws.String(userKey),
+			},
+		},
+		UpdateExpression: aws.String("SET organisations = list_append(if_not_exists(organisations, :empty_list), :userOrgList)"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":userOrgList": {
+				L: []*dynamodb.AttributeValue{
+					{
+						M: userOrg,
+					},
+				},
+			},
+			":emptyList": {
+				L: []*dynamodb.AttributeValue{},
+			},
 		},
 	}
-	for key, attribute := range newOrg {
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: []*dynamodb.TransactWriteItem{
+			{
+				Put: createOrgInput,
+			},
+			{
+				Put: createMembershipInput,
+			},
+			{
+				Update: updateUserOrgs,
+			},
+		},
+	}
+
+	_, err = ddb.TransactWriteItemsWithContext(ctx, input)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return nil, err
+	}
+
+	org := &model.Organisation{}
+
+	return org, nil
+
+}
+
+// UpdateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters to update
+func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.NewOrganisation) (*model.Organisation, error) {
+	orgKey := fmt.Sprintf("ACCOUNT#%s", organisation.Name)
+	updateOrg, err := dynamodbattribute.MarshalMap(organisation)
+	log.Printf("Attrs: %v", updateOrg)
+	if err != nil {
+		return nil, err
+	}
+
+	expressionNames := map[string]*string{}
+	expressionValues := map[string]*dynamodb.AttributeValue{}
+	for key, attribute := range updateOrg {
 		expressionNames[fmt.Sprintf("#%s", key)] = aws.String(key)
 		expressionValues[fmt.Sprintf(":%s", key)] = attribute
 	}
@@ -47,7 +174,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		},
 		ExpressionAttributeNames:  expressionNames,
 		ExpressionAttributeValues: expressionValues,
-		UpdateExpression:          aws.String("set #name = :name, #type = :type"),
+		UpdateExpression:          aws.String("set #displayName = :name, #contactEmail = :contactEmail"),
 		ReturnValues:              aws.String("ALL_NEW"),
 	}
 

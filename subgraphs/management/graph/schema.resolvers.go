@@ -14,8 +14,9 @@ import (
 )
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.NewOrganisation) (*model.Organisation, error) {
-// parse organisation name to replace spaces with dashes and lower case text
-	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, *input)
+	// parse organisation name to replace spaces with dashes and lower case text
+	userId := ctx.Value("user").(string)
+	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, userId, *input)
 
 	if err != nil {
 		fmt.Println("Could not create new organisation")
