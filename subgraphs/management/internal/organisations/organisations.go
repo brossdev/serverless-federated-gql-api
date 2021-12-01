@@ -140,7 +140,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		return nil, err
 	}
 
-	org := &model.Organisation{}
+    org := &model.Organisation{Name: organisation.Name}
 
 	return org, nil
 

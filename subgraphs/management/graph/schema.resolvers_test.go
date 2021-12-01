@@ -36,6 +36,11 @@ func (m *mockDynamoDb) UpdateItemWithContext(ctx aws.Context, input *dynamodb.Up
 	return args.Get(0).(*dynamodb.UpdateItemOutput), args.Error(1)
 }
 
+func (m *mockDynamoDb) TransactWriteItemsWithContext(ctx aws.Context, input *dynamodb.TransactWriteItemsInput, opts ...request.Option) (*dynamodb.TransactWriteItemsOutput, error) {
+	args := m.Called(input)
+	return args.Get(0).(*dynamodb.TransactWriteItemsOutput), args.Error(1)
+}
+
 func addContext(userID string) client.Option {
 	return func(bd *client.Request) {
 		ctx := context.WithValue(bd.HTTP.Context(), "user", userID)
@@ -90,9 +95,9 @@ func TestUser(t *testing.T) {
 func TestOrganisation(t *testing.T) {
 	tableName := "test"
 	mockDB := mockDynamoDb{}
-	mockDB.Mock.On("UpdateItemWithContext", mock.Anything).Return(MockOrgUpdateItemOutput("naughtydog"), nil)
+	mockDB.Mock.On("TransactWriteItemsWithContext", mock.Anything).Return(dynamodb.TransactWriteItemsOutput{}, nil)
 
-	c := client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{DB: &mockDB, TableName: tableName}})))
+	c := client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{DB: &mockDB, TableName: tableName}})),addContext("1"))
 
 	t.Run("create organisation", func(t *testing.T) {
 		var resp struct {
