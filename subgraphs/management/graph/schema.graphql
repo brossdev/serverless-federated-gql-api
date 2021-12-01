@@ -6,6 +6,7 @@ type User @key(fields: "id") {
   id: ID!
   firstName: String!
   lastName: String!
+  organisations: [Organisation]
 }
 
 type Organisation @key(fields: "id") {
