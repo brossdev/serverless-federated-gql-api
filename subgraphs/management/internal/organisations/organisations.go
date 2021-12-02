@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+    "strings"
 
 	"management/graph/model"
 
@@ -31,13 +32,15 @@ type DBOrganisationMembership struct {
 }
 
 type DBUserOrg struct {
+    KeyName string
 	Name string
 	Role string
 }
 
 func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.NewOrganisation) (*model.Organisation, error) {
 	// create organisation
-	orgKey := fmt.Sprintf("ACCOUNT#%s", organisation.Name)
+    orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
 	createdAt := time.Now().Format("2021-12-01 17:06:06")
 	dbOrg := DBOrganisation{
 		&organisation,
@@ -85,6 +88,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	userKey := fmt.Sprintf("ACCOUNT#%s", userID)
 
 	userOrgEntry := &DBUserOrg{
+        KeyName: orgName,
 		Name: organisation.Name,
 		Role: "admin",
 	}
@@ -148,7 +152,9 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 
 // UpdateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters to update
 func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.NewOrganisation) (*model.Organisation, error) {
-	orgKey := fmt.Sprintf("ACCOUNT#%s", organisation.Name)
+    // once gqlgen has run update the model type and use the previous org name for updating
+    orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
 	updateOrg, err := dynamodbattribute.MarshalMap(organisation)
 	log.Printf("Attrs: %v", updateOrg)
 	if err != nil {
@@ -174,7 +180,7 @@ func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		},
 		ExpressionAttributeNames:  expressionNames,
 		ExpressionAttributeValues: expressionValues,
-		UpdateExpression:          aws.String("set #displayName = :name, #contactEmail = :contactEmail"),
+		UpdateExpression:          aws.String("set #name = :name, #contactEmail = :contactEmail"),
 		ReturnValues:              aws.String("ALL_NEW"),
 	}
 
