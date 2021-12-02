@@ -13,7 +13,7 @@ type User @key(fields: "id") {
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
-  createdAt:String
+  createdAt: String
   contactEmail: String
 }
 

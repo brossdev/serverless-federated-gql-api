@@ -95,15 +95,15 @@ func TestUser(t *testing.T) {
 func TestOrganisation(t *testing.T) {
 	tableName := "test"
 	mockDB := mockDynamoDb{}
-	mockDB.Mock.On("TransactWriteItemsWithContext", mock.Anything).Return(dynamodb.TransactWriteItemsOutput{}, nil)
+	mockDB.Mock.On("TransactWriteItemsWithContext", mock.Anything).Return(&dynamodb.TransactWriteItemsOutput{}, nil)
 
-	c := client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{DB: &mockDB, TableName: tableName}})),addContext("1"))
+	c := client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{DB: &mockDB, TableName: tableName}})), addContext("1"))
 
 	t.Run("create organisation", func(t *testing.T) {
 		var resp struct {
 			CreateOrganisation *model.Organisation
 		}
-		c.MustPost(`mutation($input: NewOrganisation!) { createOrganisation(input: $input) { name } }`, &resp, client.Var("input", &model.NewOrganisation{Name: "naughtydog"}))
+		c.MustPost(`mutation($input: OrganisationInput!) { createOrganisation(input: $input) { name } }`, &resp, client.Var("input", &model.OrganisationInput{Name: "naughtydog"}))
 
 		assert.Equal(t, "naughtydog", resp.CreateOrganisation.Name)
 	})

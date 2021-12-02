@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
-    "strings"
 
 	"management/graph/model"
 
@@ -19,29 +19,29 @@ type DBOrganisation struct {
 	*model.OrganisationInput
 	PK        string
 	SK        string
-	Type      string
-	CreatedAt string
+	Type      string `dynamodbav:"type"`
+	CreatedAt int64  `dynamodbav:"createdAt"`
 }
 
 type DBOrganisationMembership struct {
 	PK        string
 	SK        string
-	CreatedAt string
-	UserID    string
-	Role      string
+	CreatedAt int64  `dynamodbav:"createdAt"`
+	UserID    string `dynamodbav:"userId"`
+	Role      string `dynamodbav:"role"`
 }
 
 type DBUserOrg struct {
-    KeyName string
-	Name string
-	Role string
+	KeyName string `dynamodbav:"keyName"`
+	Name    string `dynamodbav:"name"`
+	Role    string `dynamodbav:"role"`
 }
 
 func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.OrganisationInput) (*model.Organisation, error) {
 	// create organisation
-    orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
-	createdAt := time.Now().Format("2021-12-01 17:06:06")
+	createdAt := time.Now().Unix()
 	dbOrg := DBOrganisation{
 		&organisation,
 		orgKey,
@@ -65,10 +65,11 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	membershipKey := fmt.Sprintf("MEMBERSHIP#%s", userID)
 
 	orgMembership := DBOrganisationMembership{
-		PK:     orgKey,
-		SK:     membershipKey,
-		UserID: userID,
-		Role:   "admin",
+		PK:        orgKey,
+		SK:        membershipKey,
+		UserID:    userID,
+		Role:      "admin",
+		CreatedAt: createdAt,
 	}
 
 	newMembership, err := dynamodbattribute.MarshalMap(orgMembership)
@@ -88,9 +89,9 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	userKey := fmt.Sprintf("ACCOUNT#%s", userID)
 
 	userOrgEntry := &DBUserOrg{
-        KeyName: orgName,
-		Name: organisation.Name,
-		Role: "admin",
+		KeyName: orgName,
+		Name:    organisation.Name,
+		Role:    "admin",
 	}
 
 	userOrg, err := dynamodbattribute.MarshalMap(userOrgEntry)
@@ -110,7 +111,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 				S: aws.String(userKey),
 			},
 		},
-		UpdateExpression: aws.String("SET organisations = list_append(if_not_exists(organisations, :empty_list), :userOrgList)"),
+		UpdateExpression: aws.String("SET organisations = list_append(if_not_exists(organisations, :emptyList), :userOrgList)"),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":userOrgList": {
 				L: []*dynamodb.AttributeValue{
@@ -144,7 +145,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		return nil, err
 	}
 
-    org := &model.Organisation{Name: organisation.Name}
+	org := &model.Organisation{Name: organisation.Name}
 
 	return org, nil
 
@@ -152,8 +153,8 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 
 // UpdateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters to update
 func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.OrganisationInput) (*model.Organisation, error) {
-    // once gqlgen has run update the model type and use the previous org name for updating
-    orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	// once gqlgen has run update the model type and use the previous org name for updating
+	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
 	updateOrg, err := dynamodbattribute.MarshalMap(organisation)
 	log.Printf("Attrs: %v", updateOrg)
