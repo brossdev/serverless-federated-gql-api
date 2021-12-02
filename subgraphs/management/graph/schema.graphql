@@ -7,13 +7,13 @@ type User @key(fields: "id") {
   firstName: String!
   lastName: String!
   organisations: [Organisation]
-  createdAt: Date
+  createdAt: String
 }
 
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
-  createdAt: Date
+  createdAt:String
   contactEmail: String
 }
 
@@ -28,5 +28,5 @@ type Query {
 }
 
 type Mutation {
-  createOrganisation(input: NewOrganisation): Organisation!
+  createOrganisation(input: OrganisationInput): Organisation!
 }

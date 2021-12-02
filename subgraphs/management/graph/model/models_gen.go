@@ -2,21 +2,26 @@
 
 package model
 
-type NewOrganisation struct {
-	Name string `json:"name"`
-}
-
 type Organisation struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID           string  `json:"id"`
+	Name         string  `json:"name"`
+	CreatedAt    *string `json:"createdAt"`
+	ContactEmail *string `json:"contactEmail"`
 }
 
 func (Organisation) IsEntity() {}
 
+type OrganisationInput struct {
+	Name         string `json:"name"`
+	ContactEmail string `json:"contactEmail"`
+}
+
 type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	ID            string          `json:"id"`
+	FirstName     string          `json:"firstName"`
+	LastName      string          `json:"lastName"`
+	Organisations []*Organisation `json:"organisations"`
+	CreatedAt     *string         `json:"createdAt"`
 }
 
 func (User) IsEntity() {}

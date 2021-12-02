@@ -16,7 +16,7 @@ import (
 )
 
 type DBOrganisation struct {
-	*model.NewOrganisation
+	*model.OrganisationInput
 	PK        string
 	SK        string
 	Type      string
@@ -37,7 +37,7 @@ type DBUserOrg struct {
 	Role string
 }
 
-func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.NewOrganisation) (*model.Organisation, error) {
+func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.OrganisationInput) (*model.Organisation, error) {
 	// create organisation
     orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
@@ -151,7 +151,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 }
 
 // UpdateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters to update
-func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.NewOrganisation) (*model.Organisation, error) {
+func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.OrganisationInput) (*model.Organisation, error) {
     // once gqlgen has run update the model type and use the previous org name for updating
     orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
