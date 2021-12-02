@@ -1,5 +1,6 @@
 import * as sst from '@serverless-stack/resources';
 import * as iam from '@aws-cdk/aws-iam';
+import * as lambda from '@aws-cdk/aws-lambda';
 import * as cognito from '@aws-cdk/aws-cognito';
 import { CorsHttpMethod } from '@aws-cdk/aws-apigatewayv2';
 import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
@@ -27,6 +28,7 @@ export default class GatewayStack extends sst.Stack {
       'PostConfirmation',
       {
         handler: 'src/triggers/post-confirmation.handler',
+        architectures: [lambda.Architecture.ARM_64],
         environment: {
           TABLE_NAME: table.tableName,
         },
@@ -66,7 +68,10 @@ export default class GatewayStack extends sst.Stack {
         userPool,
         userPoolClient,
       }),
-      server: 'src/lambda.handler',
+      server: {
+        handler: 'src/lambda.handler',
+        architectures: [lambda.Architecture.ARM_64],
+      },
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
       cors: {
         allowOrigins: ['http://localhost:3000'],
