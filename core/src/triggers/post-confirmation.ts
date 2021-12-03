@@ -8,15 +8,14 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     console.log({ req: event.request });
     const {
       email = 'test',
-      sub,
+      sub: id,
       given_name: firstName = 'test',
       family_name: lastName = 'test',
     } = event.request.userAttributes;
-    console.log({ sub });
 
     const newUserItem = DB_MAP.USER.putInput({
       email,
-      sub,
+      id,
       firstName,
       lastName,
     });
