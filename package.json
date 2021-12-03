@@ -11,6 +11,7 @@
   "scripts": {
     "subgraphs": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:subgraph:*",
     "subgraph:management": "npm run start -w subgraphs/management",
+    "subgraph:account": "npm run start -w subgraphs/account",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
     "frontend": "npm run start -w frontend",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",

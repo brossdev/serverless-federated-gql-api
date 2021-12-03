@@ -29,7 +29,7 @@ input OrganisationInput {
   contactEmail: String!
 }
 
-type Query {
+extend type Query {
   getCurrentUser: User!
   getOrganisation(organisationId: ID!): Organisation!
 }
