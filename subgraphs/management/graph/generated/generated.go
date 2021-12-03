@@ -77,6 +77,12 @@ type ComplexityRoot struct {
 		Organisations func(childComplexity int) int
 	}
 
+	UserOrganisation struct {
+		KeyName func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Role    func(childComplexity int) int
+	}
+
 	Service struct {
 		SDL func(childComplexity int) int
 	}
@@ -246,6 +252,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Organisations(childComplexity), true
 
+	case "UserOrganisation.keyName":
+		if e.complexity.UserOrganisation.KeyName == nil {
+			break
+		}
+
+		return e.complexity.UserOrganisation.KeyName(childComplexity), true
+
+	case "UserOrganisation.name":
+		if e.complexity.UserOrganisation.Name == nil {
+			break
+		}
+
+		return e.complexity.UserOrganisation.Name(childComplexity), true
+
+	case "UserOrganisation.role":
+		if e.complexity.UserOrganisation.Role == nil {
+			break
+		}
+
+		return e.complexity.UserOrganisation.Role(childComplexity), true
+
 	case "_Service.sdl":
 		if e.complexity.Service.SDL == nil {
 			break
@@ -321,19 +348,26 @@ var sources = []*ast.Source{
 #
 # https://gqlgen.com/getting-started/
 
-type User @key(fields: "id") {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  organisations: [Organisation]
-  createdAt: String
-}
 
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
-  createdAt:String
+  createdAt: String
   contactEmail: String
+}
+
+type UserOrganisation {
+  name: String!
+  keyName: String
+  role: String
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  organisations: [UserOrganisation]
+  createdAt: String
 }
 
 input OrganisationInput {
@@ -1132,9 +1166,9 @@ func (ec *executionContext) _User_organisations(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Organisation)
+	res := resTmp.([]*model.UserOrganisation)
 	fc.Result = res
-	return ec.marshalOOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
+	return ec.marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -1156,6 +1190,105 @@ func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserOrganisation_name(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserOrganisation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserOrganisation_keyName(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserOrganisation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KeyName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UserOrganisation_role(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserOrganisation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2633,6 +2766,37 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var userOrganisationImplementors = []string{"UserOrganisation"}
+
+func (ec *executionContext) _UserOrganisation(ctx context.Context, sel ast.SelectionSet, obj *model.UserOrganisation) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userOrganisationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserOrganisation")
+		case "name":
+			out.Values[i] = ec._UserOrganisation_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "keyName":
+			out.Values[i] = ec._UserOrganisation_keyName(ctx, field, obj)
+		case "role":
+			out.Values[i] = ec._UserOrganisation_role(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var _ServiceImplementors = []string{"_Service"}
 
 func (ec *executionContext) __Service(ctx context.Context, sel ast.SelectionSet, obj *fedruntime.Service) graphql.Marshaler {
@@ -3375,54 +3539,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v []*model.Organisation) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.Organisation) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Organisation(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOOrganisationInput2ᚖmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx context.Context, v interface{}) (*model.OrganisationInput, error) {
 	if v == nil {
 		return nil, nil
@@ -3453,6 +3569,54 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx context.Context, sel ast.SelectionSet, v []*model.UserOrganisation) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUserOrganisation2ᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOUserOrganisation2ᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.UserOrganisation) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserOrganisation(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO_Entity2githubᚗcomᚋ99designsᚋgqlgenᚋpluginᚋfederationᚋfedruntimeᚐEntity(ctx context.Context, sel ast.SelectionSet, v fedruntime.Entity) graphql.Marshaler {

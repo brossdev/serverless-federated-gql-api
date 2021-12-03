@@ -31,15 +31,10 @@ type DBOrganisationMembership struct {
 	Role      string `dynamodbav:"role"`
 }
 
-type DBUserOrg struct {
-	KeyName string `dynamodbav:"keyName"`
-	Name    string `dynamodbav:"name"`
-	Role    string `dynamodbav:"role"`
-}
-
 func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.OrganisationInput) (*model.Organisation, error) {
 	// create organisation
 	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	adminRole := "admin"
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
 	createdAt := time.Now().Unix()
 	dbOrg := DBOrganisation{
@@ -68,7 +63,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		PK:        orgKey,
 		SK:        membershipKey,
 		UserID:    userID,
-		Role:      "admin",
+		Role:      adminRole,
 		CreatedAt: createdAt,
 	}
 
@@ -88,10 +83,10 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 
 	userKey := fmt.Sprintf("ACCOUNT#%s", userID)
 
-	userOrgEntry := &DBUserOrg{
-		KeyName: orgName,
+	userOrgEntry := &model.UserOrganisation{
+		KeyName: &orgName,
 		Name:    organisation.Name,
-		Role:    "admin",
+		Role:    &adminRole,
 	}
 
 	userOrg, err := dynamodbattribute.MarshalMap(userOrgEntry)

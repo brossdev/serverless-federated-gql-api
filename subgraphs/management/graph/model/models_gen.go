@@ -17,11 +17,17 @@ type OrganisationInput struct {
 }
 
 type User struct {
-	ID            string          `json:"id"`
-	FirstName     string          `json:"firstName"`
-	LastName      string          `json:"lastName"`
-	Organisations []*Organisation `json:"organisations"`
-	CreatedAt     *string         `json:"createdAt"`
+	ID            string              `json:"id"`
+	FirstName     string              `json:"firstName"`
+	LastName      string              `json:"lastName"`
+	Organisations []*UserOrganisation `json:"organisations"`
+	CreatedAt     *string             `json:"createdAt"`
 }
 
 func (User) IsEntity() {}
+
+type UserOrganisation struct {
+	Name    string  `json:"name"`
+	KeyName *string `json:"keyName"`
+	Role    *string `json:"role"`
+}

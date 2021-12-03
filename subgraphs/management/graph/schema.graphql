@@ -2,19 +2,26 @@
 #
 # https://gqlgen.com/getting-started/
 
-type User @key(fields: "id") {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  organisations: [Organisation]
-  createdAt: String
-}
 
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
   createdAt: String
   contactEmail: String
+}
+
+type UserOrganisation {
+  name: String!
+  keyName: String
+  role: String
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  organisations: [UserOrganisation]
+  createdAt: String
 }
 
 input OrganisationInput {
