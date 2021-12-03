@@ -11,9 +11,9 @@ interface NavProps {
   user: { firstName: string; lastName: string };
   logout(): void;
 }
+
 const Nav = (props: NavProps) => {
   const { navLinks, user, logout } = props;
-  console.log({ user });
   return (
     <nav>
       <p>Hello {user.firstName}</p>
@@ -24,6 +24,9 @@ const Nav = (props: NavProps) => {
           </li>
         ))}
       </ul>
+      <p>
+        <Link to="/settings">settings</Link>{' '}
+      </p>
       <button onClick={logout}>Sign Out</button>
     </nav>
   );

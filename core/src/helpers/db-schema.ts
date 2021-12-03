@@ -1,5 +1,5 @@
-// import { DynamoDB, PutItemInput } from "@aws-sdk/client-dynamodb";
 import { marshall } from '@aws-sdk/util-dynamodb';
+import { format } from 'date-fns';
 
 export interface UserType {
   email: string;
@@ -18,6 +18,8 @@ export const DB_MAP = {
         lastName,
         sub,
         email,
+        type: 'user',
+        createdAt: format(new Date(), 'YYYY-MM-dd HH:mm:ss'),
       }),
   },
 };

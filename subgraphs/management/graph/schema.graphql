@@ -2,19 +2,31 @@
 #
 # https://gqlgen.com/getting-started/
 
-type User @key(fields: "id") {
-  id: ID!
-  firstName: String!
-  lastName: String!
-}
 
 type Organisation @key(fields: "id") {
   id: ID!
   name: String!
+  createdAt: String
+  contactEmail: String
 }
 
-input NewOrganisation {
+type UserOrganisation {
   name: String!
+  keyName: String
+  role: String
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  organisations: [UserOrganisation]
+  createdAt: String
+}
+
+input OrganisationInput {
+  name: String!
+  contactEmail: String!
 }
 
 type Query {
@@ -23,5 +35,5 @@ type Query {
 }
 
 type Mutation {
-  createOrganisation(input: NewOrganisation): Organisation!
+  createOrganisation(input: OrganisationInput): Organisation!
 }
