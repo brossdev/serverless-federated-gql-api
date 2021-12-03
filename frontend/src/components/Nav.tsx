@@ -11,6 +11,7 @@ interface NavProps {
   user: { firstName: string; lastName: string };
   logout(): void;
 }
+
 const Nav = (props: NavProps) => {
   const { navLinks, user, logout } = props;
   console.log({ user });

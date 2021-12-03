@@ -46,7 +46,14 @@ const AuthenticatedApp = ({ logout }: AuthAppProps) => {
         <Route path="/customers" element={<Customers />} />
         <Route path="/vendors" element={<Vendors />} />
         <Route path="/settings" element={<Settings />}>
-          <Route path="organisations" element={<OrganisationSettings />} />
+          <Route
+            path="organisations"
+            element={
+              <OrganisationSettings
+                organisations={user.getCurrentUser.organisations}
+              />
+            }
+          />
           <Route path="organisations/new" element={<NewOrganisation />} />
         </Route>
       </Routes>
