@@ -1,48 +1,198 @@
 package organisations
 
 import (
-    "fmt"
-    "context"
+	"context"
+	"fmt"
+	"log"
+	"strings"
+	"time"
 
-    "management/graph/model"
-    "github.com/aws/aws-sdk-go/aws"
-    "github.com/aws/aws-sdk-go/service/dynamodb"
-    "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-    "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"management/graph/model"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
-type OrgItem struct {
-    model.NewOrganisation
-    pk string
-    sk string
+type DBOrganisation struct {
+	*model.OrganisationInput
+	PK        string
+	SK        string
+	Type      string `dynamodbav:"type"`
+	CreatedAt int64  `dynamodbav:"createdAt"`
 }
 
-// CreateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters
-func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.NewOrganisation ) (*model.Organisation, error) {
-    orgKey := fmt.Sprintf("ORG#%s", organisation.Name)
-    orgItem := OrgItem{
-        organisation,
-        orgKey,
-        orgKey,
-    }
-    newOrg, err := dynamodbattribute.MarshalMap(orgItem)
+type DBOrganisationMembership struct {
+	PK        string
+	SK        string
+	CreatedAt int64  `dynamodbav:"createdAt"`
+	UserID    string `dynamodbav:"userId"`
+	Role      string `dynamodbav:"role"`
+}
 
-    input := &dynamodb.PutItemInput{
-        TableName: aws.String(tableName),
-        Item: newOrg,
-    }
+func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName, userID string, organisation model.OrganisationInput) (*model.Organisation, error) {
+	// create organisation
+	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	adminRole := "admin"
+	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
+	createdAt := time.Now().Unix()
+	dbOrg := DBOrganisation{
+		&organisation,
+		orgKey,
+		orgKey,
+		"organisation",
+		createdAt,
+	}
 
-    result, err := ddb.PutItemWithContext(ctx, input)
-    if err != nil {
-        return nil, err
-    }
+	newOrg, err := dynamodbattribute.MarshalMap(dbOrg)
+	log.Printf("Attrs: %v", newOrg)
+	if err != nil {
+		return nil, err
+	}
 
-    org := model.Organisation{}
+	createOrgInput := &dynamodb.Put{
+		TableName: aws.String(tableName),
+		Item:      newOrg,
+	}
 
-    if err := dynamodbattribute.UnmarshalMap(result.Attributes, org); err != nil {
-        return nil, err
-    }
+	// create membership
+	membershipKey := fmt.Sprintf("MEMBERSHIP#%s", userID)
 
-    return &org, nil
+	orgMembership := DBOrganisationMembership{
+		PK:        orgKey,
+		SK:        membershipKey,
+		UserID:    userID,
+		Role:      adminRole,
+		CreatedAt: createdAt,
+	}
+
+	newMembership, err := dynamodbattribute.MarshalMap(orgMembership)
+
+	log.Printf("Membership Attrs: %v", newMembership)
+	if err != nil {
+		return nil, err
+	}
+
+	createMembershipInput := &dynamodb.Put{
+		TableName: aws.String(tableName),
+		Item:      newMembership,
+	}
+
+	// update user with organisation
+
+	userKey := fmt.Sprintf("ACCOUNT#%s", userID)
+
+	userOrgEntry := &model.UserOrganisation{
+		KeyName: &orgName,
+		Name:    organisation.Name,
+		Role:    &adminRole,
+	}
+
+	userOrg, err := dynamodbattribute.MarshalMap(userOrgEntry)
+
+	log.Printf("User Org Attrs: %v", userOrg)
+	if err != nil {
+		return nil, err
+	}
+
+	updateUserOrgs := &dynamodb.Update{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"PK": {
+				S: aws.String(userKey),
+			},
+			"SK": {
+				S: aws.String(userKey),
+			},
+		},
+		UpdateExpression: aws.String("SET organisations = list_append(if_not_exists(organisations, :emptyList), :userOrgList)"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":userOrgList": {
+				L: []*dynamodb.AttributeValue{
+					{
+						M: userOrg,
+					},
+				},
+			},
+			":emptyList": {
+				L: []*dynamodb.AttributeValue{},
+			},
+		},
+	}
+	input := &dynamodb.TransactWriteItemsInput{
+		TransactItems: []*dynamodb.TransactWriteItem{
+			{
+				Put: createOrgInput,
+			},
+			{
+				Put: createMembershipInput,
+			},
+			{
+				Update: updateUserOrgs,
+			},
+		},
+	}
+
+	_, err = ddb.TransactWriteItemsWithContext(ctx, input)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return nil, err
+	}
+
+	org := &model.Organisation{Name: organisation.Name}
+
+	return org, nil
+
+}
+
+// UpdateOrganisation returns a organisation when given a valid dynamodb instance and valid organisation parameters to update
+func UpdateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tableName string, organisation model.OrganisationInput) (*model.Organisation, error) {
+	// once gqlgen has run update the model type and use the previous org name for updating
+	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
+	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
+	updateOrg, err := dynamodbattribute.MarshalMap(organisation)
+	log.Printf("Attrs: %v", updateOrg)
+	if err != nil {
+		return nil, err
+	}
+
+	expressionNames := map[string]*string{}
+	expressionValues := map[string]*dynamodb.AttributeValue{}
+	for key, attribute := range updateOrg {
+		expressionNames[fmt.Sprintf("#%s", key)] = aws.String(key)
+		expressionValues[fmt.Sprintf(":%s", key)] = attribute
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"PK": {
+				S: aws.String(orgKey),
+			},
+			"SK": {
+				S: aws.String(orgKey),
+			},
+		},
+		ExpressionAttributeNames:  expressionNames,
+		ExpressionAttributeValues: expressionValues,
+		UpdateExpression:          aws.String("set #name = :name, #contactEmail = :contactEmail"),
+		ReturnValues:              aws.String("ALL_NEW"),
+	}
+
+	result, err := ddb.UpdateItemWithContext(ctx, input)
+	log.Printf("Result: %v", result)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return nil, err
+	}
+
+	org := &model.Organisation{}
+
+	if err := dynamodbattribute.UnmarshalMap(result.Attributes, org); err != nil {
+		return nil, err
+	}
+
+	return org, nil
 
 }

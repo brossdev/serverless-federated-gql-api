@@ -7,6 +7,9 @@ import Customers from './screens/Customers';
 import Accounts from './screens/Accounts';
 import Vendors from './screens/Vendors';
 import Schedule from './screens/Schedule';
+import Settings from './screens/settings/Settings';
+import OrganisationSettings from './screens/settings/Organisations';
+import NewOrganisation from './screens/settings/NewOrganisation';
 
 import CURRENT_USER_QUERY from './api/graphql/queries/currentUser';
 
@@ -42,6 +45,17 @@ const AuthenticatedApp = ({ logout }: AuthAppProps) => {
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/vendors" element={<Vendors />} />
+        <Route path="/settings" element={<Settings />}>
+          <Route
+            path="organisations"
+            element={
+              <OrganisationSettings
+                organisations={user.getCurrentUser.organisations}
+              />
+            }
+          />
+          <Route path="organisations/new" element={<NewOrganisation />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

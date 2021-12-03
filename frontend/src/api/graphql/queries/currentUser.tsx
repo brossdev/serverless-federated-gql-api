@@ -5,6 +5,10 @@ const CurrentUser = gql`
     getCurrentUser {
       firstName
       lastName
+      organisations {
+        name
+        role
+      }
     }
   }
 `;
