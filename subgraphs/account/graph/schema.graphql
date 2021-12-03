@@ -2,21 +2,34 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
+enum AccountType {
+  CURRENT_ACCOUNT
+  JOINT_ACCOUNT
+  SAVINGS_ACCOUNT
 }
 
-type Query {
-  todos: [Todo!]!
+input NewAccount {
+  name: String!
+  type: AccountType!
+
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
+type Account {
+  ownerId: ID
+  name: String!
+  type: AccountType!
+}
+
+extend type User @key(fields: "id") {
+  id: String! @external
+  accounts: [Account]
+}
+
+extend type Organisation @key(fields: "id") {
+  id: String! @external
+  accounts: [Account]
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createAccount(input: NewAccount!): Account!
 }

@@ -36,6 +36,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	adminRole := "admin"
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
+	organisation.ID = orgName
 	createdAt := time.Now().Unix()
 	dbOrg := DBOrganisation{
 		&organisation,
