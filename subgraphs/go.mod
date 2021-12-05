@@ -1,4 +1,4 @@
-module management
+module subgraph
 
 go 1.17
 

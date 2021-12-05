@@ -6,5 +6,5 @@ export default function main(app) {
     runtime: 'go1.x',
   });
 
-  new ManagementStack(app, 'management');
+  new ManagementStack(app, 'api');
 }

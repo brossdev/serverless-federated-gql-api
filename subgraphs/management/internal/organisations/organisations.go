@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"management/graph/model"
+	"subgraph/management/graph/model"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -19,6 +19,7 @@ type DBOrganisation struct {
 	*model.OrganisationInput
 	PK        string
 	SK        string
+	ID        string
 	Type      string `dynamodbav:"type"`
 	CreatedAt int64  `dynamodbav:"createdAt"`
 }
@@ -36,12 +37,12 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	orgName := strings.ToLower(strings.Join(strings.Fields(strings.TrimSpace(organisation.Name)), "-"))
 	adminRole := "admin"
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
-	organisation.ID = orgName
 	createdAt := time.Now().Unix()
 	dbOrg := DBOrganisation{
 		&organisation,
 		orgKey,
 		orgKey,
+		orgName,
 		"organisation",
 		createdAt,
 	}

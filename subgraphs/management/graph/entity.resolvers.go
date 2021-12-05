@@ -6,8 +6,8 @@ package graph
 import (
 	"context"
 	"fmt"
-	"management/graph/generated"
-	"management/graph/model"
+	"subgraph/management/graph/generated"
+	"subgraph/management/graph/model"
 )
 
 func (r *entityResolver) FindOrganisationByID(ctx context.Context, id string) (*model.Organisation, error) {

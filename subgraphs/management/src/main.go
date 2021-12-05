@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"management/graph"
-	"management/graph/generated"
 	"os"
+	"subgraph/management/graph"
+	"subgraph/management/graph/generated"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
