@@ -4,10 +4,10 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"account/graph/generated"
-	"account/graph/model"
 	"context"
 	"fmt"
+	"subgraph/account/graph/generated"
+	"subgraph/account/graph/model"
 )
 
 func (r *entityResolver) FindOrganisationByID(ctx context.Context, id string) (*model.Organisation, error) {

@@ -4,10 +4,10 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"account/graph/generated"
-	"account/graph/model"
 	"context"
 	"fmt"
+	"subgraph/account/graph/generated"
+	"subgraph/account/graph/model"
 )
 
 func (r *mutationResolver) CreateAccount(ctx context.Context, input model.NewAccount) (*model.Account, error) {

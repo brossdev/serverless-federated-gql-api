@@ -3,12 +3,12 @@
 package generated
 
 import (
-	"account/graph/model"
 	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"strconv"
+	"subgraph/account/graph/model"
 	"sync"
 	"sync/atomic"
 
@@ -387,7 +387,7 @@ func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Contex
 	var arg0 model.NewAccount
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewAccount2accountᚋgraphᚋmodelᚐNewAccount(ctx, tmp)
+		arg0, err = ec.unmarshalNNewAccount2subgraphᚋaccountᚋgraphᚋmodelᚐNewAccount(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -563,7 +563,7 @@ func (ec *executionContext) _Account_type(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.(model.AccountType)
 	fc.Result = res
-	return ec.marshalNAccountType2accountᚋgraphᚋmodelᚐAccountType(ctx, field.Selections, res)
+	return ec.marshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Entity_findOrganisationByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -605,7 +605,7 @@ func (ec *executionContext) _Entity_findOrganisationByID(ctx context.Context, fi
 	}
 	res := resTmp.(*model.Organisation)
 	fc.Result = res
-	return ec.marshalNOrganisation2ᚖaccountᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
+	return ec.marshalNOrganisation2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Entity_findUserByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -647,7 +647,7 @@ func (ec *executionContext) _Entity_findUserByID(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖaccountᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -689,7 +689,7 @@ func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field g
 	}
 	res := resTmp.(*model.Account)
 	fc.Result = res
-	return ec.marshalNAccount2ᚖaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
+	return ec.marshalNAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Organisation_id(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
@@ -756,7 +756,7 @@ func (ec *executionContext) _Organisation_accounts(ctx context.Context, field gr
 	}
 	res := resTmp.([]*model.Account)
 	fc.Result = res
-	return ec.marshalOAccount2ᚕᚖaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
+	return ec.marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query__entities(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -971,7 +971,7 @@ func (ec *executionContext) _User_accounts(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.([]*model.Account)
 	fc.Result = res
-	return ec.marshalOAccount2ᚕᚖaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
+	return ec.marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) __Service_sdl(ctx context.Context, field graphql.CollectedField, obj *fedruntime.Service) (ret graphql.Marshaler) {
@@ -2149,7 +2149,7 @@ func (ec *executionContext) unmarshalInputNewAccount(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalNAccountType2accountᚋgraphᚋmodelᚐAccountType(ctx, v)
+			it.Type, err = ec.unmarshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2699,11 +2699,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAccount2accountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v model.Account) graphql.Marshaler {
+func (ec *executionContext) marshalNAccount2subgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v model.Account) graphql.Marshaler {
 	return ec._Account(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAccount2ᚖaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
+func (ec *executionContext) marshalNAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2713,13 +2713,13 @@ func (ec *executionContext) marshalNAccount2ᚖaccountᚋgraphᚋmodelᚐAccount
 	return ec._Account(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNAccountType2accountᚋgraphᚋmodelᚐAccountType(ctx context.Context, v interface{}) (model.AccountType, error) {
+func (ec *executionContext) unmarshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx context.Context, v interface{}) (model.AccountType, error) {
 	var res model.AccountType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNAccountType2accountᚋgraphᚋmodelᚐAccountType(ctx context.Context, sel ast.SelectionSet, v model.AccountType) graphql.Marshaler {
+func (ec *executionContext) marshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx context.Context, sel ast.SelectionSet, v model.AccountType) graphql.Marshaler {
 	return v
 }
 
@@ -2738,16 +2738,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewAccount2accountᚋgraphᚋmodelᚐNewAccount(ctx context.Context, v interface{}) (model.NewAccount, error) {
+func (ec *executionContext) unmarshalNNewAccount2subgraphᚋaccountᚋgraphᚋmodelᚐNewAccount(ctx context.Context, v interface{}) (model.NewAccount, error) {
 	res, err := ec.unmarshalInputNewAccount(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrganisation2accountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v model.Organisation) graphql.Marshaler {
+func (ec *executionContext) marshalNOrganisation2subgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v model.Organisation) graphql.Marshaler {
 	return ec._Organisation(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrganisation2ᚖaccountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.Organisation) graphql.Marshaler {
+func (ec *executionContext) marshalNOrganisation2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.Organisation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2772,11 +2772,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2accountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2subgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖaccountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3157,7 +3157,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAccount2ᚕᚖaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v []*model.Account) graphql.Marshaler {
+func (ec *executionContext) marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v []*model.Account) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3184,7 +3184,7 @@ func (ec *executionContext) marshalOAccount2ᚕᚖaccountᚋgraphᚋmodelᚐAcco
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOAccount2ᚖaccountᚋgraphᚋmodelᚐAccount(ctx, sel, v[i])
+			ret[i] = ec.marshalOAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3198,7 +3198,7 @@ func (ec *executionContext) marshalOAccount2ᚕᚖaccountᚋgraphᚋmodelᚐAcco
 	return ret
 }
 
-func (ec *executionContext) marshalOAccount2ᚖaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
+func (ec *executionContext) marshalOAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -11,7 +11,6 @@ enum AccountType {
 input NewAccount {
   name: String!
   type: AccountType!
-
 }
 
 type Account {
@@ -21,12 +20,12 @@ type Account {
 }
 
 extend type User @key(fields: "id") {
-  id: String! @external
+  id: ID! @external
   accounts: [Account]
 }
 
 extend type Organisation @key(fields: "id") {
-  id: String! @external
+  id: ID! @external
   accounts: [Account]
 }
 

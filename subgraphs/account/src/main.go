@@ -1,11 +1,11 @@
 package main
 
 import (
-	"account/graph"
-	"account/graph/generated"
 	"context"
 	"log"
 	"os"
+	"subgraph/account/graph"
+	"subgraph/account/graph/generated"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

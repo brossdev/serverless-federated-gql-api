@@ -1,5 +1,6 @@
 import * as sst from '@serverless-stack/resources';
 import * as iam from '@aws-cdk/aws-iam';
+import * as ssm from '@aws-cdk/aws-ssm';
 import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
 
 export default class AccountStack extends sst.Stack {
@@ -8,22 +9,43 @@ export default class AccountStack extends sst.Stack {
 
     const AWS_ACCOUNT_ID = sst.Stack.of(this).account;
     const AWS_REGION = sst.Stack.of(this).region;
-    const tableName = process.env.TABLE_NAME;
-    const userPoolId = process.env.USERPOOL_ID;
-    const userPoolClientId = process.env.USERPOOL_CLIENT_ID;
+
+    const tableName = ssm.StringParameter.fromStringParameterAttributes(
+      this,
+      'tablename',
+      {
+        parameterName: '/serverless-fed-graphql/database',
+      },
+    );
+
+    const userPoolId = ssm.StringParameter.fromStringParameterAttributes(
+      this,
+      'userPoolId',
+      {
+        parameterName: '/serverless-fed-graphql/userpool',
+      },
+    );
+
+    const userPoolClientId = ssm.StringParameter.fromStringParameterAttributes(
+      this,
+      'userPoolClientId',
+      {
+        parameterName: '/serverless-fed-graphql/userpool-client',
+      },
+    );
 
     const api = new sst.Api(this, 'AccountApi', {
       defaultAuthorizer: new apigAuthorizers.HttpJwtAuthorizer({
         identitySource: ['$request.header.authorization'],
-        jwtAudience: [userPoolClientId],
-        jwtIssuer: `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userPoolId}`,
+        jwtAudience: [userPoolClientId.stringValue],
+        jwtIssuer: `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userPoolId.stringValue}`,
       }),
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
       routes: {
         $default: {
           handler: 'src',
           environment: {
-            TABLE_NAME: tableName,
+            TABLE_NAME: tableName.stringValue,
           },
         },
       },

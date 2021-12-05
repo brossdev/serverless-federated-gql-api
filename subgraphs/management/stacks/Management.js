@@ -9,7 +9,6 @@ export default class ManagementStack extends sst.Stack {
 
     const AWS_ACCOUNT_ID = sst.Stack.of(this).account;
     const AWS_REGION = sst.Stack.of(this).region;
-    // const customDomain = process.env.DOMAIN;
 
     const tableName = ssm.StringParameter.fromStringParameterAttributes(
       this,
@@ -41,10 +40,6 @@ export default class ManagementStack extends sst.Stack {
         jwtAudience: [userPoolClientId.stringValue],
         jwtIssuer: `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userPoolId.stringValue}`,
       }),
-      // customDomain: {
-      //     domainName: customDomain,
-      //     path: "management",
-      // },
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
       routes: {
         $default: {

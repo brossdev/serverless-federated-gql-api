@@ -65,7 +65,7 @@ export default class GatewayStack extends sst.Stack {
     this.api = new sst.ApolloApi(this, 'FederatedApi', {
       defaultAuthorizer: new apigAuthorizers.HttpUserPoolAuthorizer({
         userPool,
-        userPoolClient,
+        userPoolClients: [userPoolClient],
       }),
       server: 'src/lambda.handler',
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
