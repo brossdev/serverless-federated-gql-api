@@ -1,4 +1,5 @@
 import * as sst from '@serverless-stack/resources';
+import * as ssm from '@aws-cdk/aws-ssm';
 
 export default class DataStore extends sst.Stack {
   public readonly table: sst.Table;
@@ -12,6 +13,15 @@ export default class DataStore extends sst.Stack {
         SK: sst.TableFieldType.STRING,
       },
       primaryIndex: { partitionKey: 'PK', sortKey: 'SK' },
+    });
+
+    new ssm.StringParameter(this, `${this.stackName}-database`, {
+      parameterName: '/serverless-fed-graphql/database',
+      description: 'serverless graphql database',
+      stringValue: this.table.tableName,
+      type: ssm.ParameterType.STRING,
+      tier: ssm.ParameterTier.STANDARD,
+      allowedPattern: '.*',
     });
     // Show the Table Name in the output
     this.addOutputs({

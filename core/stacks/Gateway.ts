@@ -1,6 +1,7 @@
 import * as sst from '@serverless-stack/resources';
 import * as iam from '@aws-cdk/aws-iam';
 import * as cognito from '@aws-cdk/aws-cognito';
+import * as ssm from '@aws-cdk/aws-ssm';
 import { CorsHttpMethod } from '@aws-cdk/aws-apigatewayv2';
 import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
 
@@ -79,13 +80,24 @@ export default class GatewayStack extends sst.Stack {
           'X-Api-Key',
         ],
       },
-      defaultFunctionProps: {
-        environment: {
-          MANAGEMENT_SERVICE_API: process.env.MANAGEMENT_SERVICE_API ?? '',
-        },
-      },
+    });
+    new ssm.StringParameter(this, `${this.stackName}-userpool`, {
+      parameterName: '/serverless-fed-graphql/userpool',
+      description: 'serverless graphql userpool',
+      stringValue: userPool.userPoolId,
+      type: ssm.ParameterType.STRING,
+      tier: ssm.ParameterTier.STANDARD,
+      allowedPattern: '.*',
     });
 
+    new ssm.StringParameter(this, `${this.stackName}-userpool-client`, {
+      parameterName: '/serverless-fed-graphql/userpool-client',
+      description: 'serverless graphql userpool client',
+      stringValue: userPoolClient.userPoolClientId,
+      type: ssm.ParameterType.STRING,
+      tier: ssm.ParameterTier.STANDARD,
+      allowedPattern: '.*',
+    });
     // Show the endpoint in the output
     this.addOutputs({
       ApiEndpoint: this.api.url,
