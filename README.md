@@ -12,6 +12,10 @@ This project was built as a proof of concept to test building a Federated GraphQ
 
 ## Infrastructure
 
+<img width="1244" alt="Screenshot 2021-12-06 at 19 42 16" src="https://user-images.githubusercontent.com/18420698/144911617-650c26cd-f86b-4b57-b50f-c5cbed90ad33.png">
+
+
+
 Diagram to follow
 
 ### Core Stack
