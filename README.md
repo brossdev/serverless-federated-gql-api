@@ -3,9 +3,9 @@
 This project was built as a proof of concept to test building a Federated GraphQL API using AWS Lambda and SST Framework along with some developer tooling i wanted to experiment with.  This is not designed to be production ready but does use some useful developer tooling such git hooks and a root level Typescript and Eslint config shared across the stacks.
 
 ## Technologies in this repository
-- Apollo Federation ( GraphQL )
-- Serverless Stack ( SST )
-- NPM workspaces
+- [Apollo Federation ( GraphQL )](https://www.apollographql.com/apollo-federation/)
+- [Serverless Stack ( SST )](https://serverless-stack.com/)
+- [NPM workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
 - Git Hooks
 - Typescript
 - Go
