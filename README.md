@@ -28,9 +28,9 @@ Basic React App written in typescript which is connected to the gateway lambda a
 
 ### Prerequisities
 
-go 1.17+ installed
-node 14+ installed
-npm 7+ installed
+- go 1.17+ installed
+- node 14+ installed
+- npm 7+ installed
 
 ## Running Locally
 
