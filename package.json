@@ -9,7 +9,6 @@
     "frontend"
   ],
   "scripts": {
-    "subgraphs": "concurrently -c \"#4EABD4,#3B22B3,#82D7F7\" -k -i npm:subgraph:*",
     "subgraph:management": "npm run start -w subgraphs/management",
     "subgraph:account": "npm run start -w subgraphs/account",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
@@ -28,7 +27,6 @@
     "@apollo/rover": "^0.4.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "concurrently": "^6.3.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^19.0.1",
     "eslint-config-airbnb-typescript": "^16.0.0",
