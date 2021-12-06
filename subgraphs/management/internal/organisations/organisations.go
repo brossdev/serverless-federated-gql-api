@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"management/graph/model"
+	"subgraph/management/graph/model"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -19,6 +19,7 @@ type DBOrganisation struct {
 	*model.OrganisationInput
 	PK        string
 	SK        string
+	ID        string
 	Type      string `dynamodbav:"type"`
 	CreatedAt int64  `dynamodbav:"createdAt"`
 }
@@ -41,6 +42,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 		&organisation,
 		orgKey,
 		orgKey,
+		orgName,
 		"organisation",
 		createdAt,
 	}

@@ -1,0 +1,34 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+enum AccountType {
+  CURRENT_ACCOUNT
+  JOINT_ACCOUNT
+  SAVINGS_ACCOUNT
+}
+
+input NewAccount {
+  name: String!
+  type: AccountType!
+}
+
+type Account {
+  ownerId: ID
+  name: String!
+  type: AccountType!
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  accounts: [Account]
+}
+
+extend type Organisation @key(fields: "id") {
+  id: ID! @external
+  accounts: [Account]
+}
+
+type Mutation {
+  createAccount(input: NewAccount!): Account!
+}

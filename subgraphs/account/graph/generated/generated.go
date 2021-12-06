@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"subgraph/management/graph/model"
+	"subgraph/account/graph/model"
 	"sync"
 	"sync/atomic"
 
@@ -39,48 +39,40 @@ type Config struct {
 type ResolverRoot interface {
 	Entity() EntityResolver
 	Mutation() MutationResolver
-	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Account struct {
+		Name    func(childComplexity int) int
+		OwnerID func(childComplexity int) int
+		Type    func(childComplexity int) int
+	}
+
 	Entity struct {
 		FindOrganisationByID func(childComplexity int, id string) int
 		FindUserByID         func(childComplexity int, id string) int
 	}
 
 	Mutation struct {
-		CreateOrganisation func(childComplexity int, input *model.OrganisationInput) int
+		CreateAccount func(childComplexity int, input model.NewAccount) int
 	}
 
 	Organisation struct {
-		ContactEmail func(childComplexity int) int
-		CreatedAt    func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Name         func(childComplexity int) int
+		Accounts func(childComplexity int) int
+		ID       func(childComplexity int) int
 	}
 
 	Query struct {
-		GetCurrentUser     func(childComplexity int) int
-		GetOrganisation    func(childComplexity int, organisationID string) int
 		__resolve__service func(childComplexity int) int
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
 	}
 
 	User struct {
-		CreatedAt     func(childComplexity int) int
-		FirstName     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		LastName      func(childComplexity int) int
-		Organisations func(childComplexity int) int
-	}
-
-	UserOrganisation struct {
-		KeyName func(childComplexity int) int
-		Name    func(childComplexity int) int
-		Role    func(childComplexity int) int
+		Accounts func(childComplexity int) int
+		ID       func(childComplexity int) int
 	}
 
 	Service struct {
@@ -93,11 +85,7 @@ type EntityResolver interface {
 	FindUserByID(ctx context.Context, id string) (*model.User, error)
 }
 type MutationResolver interface {
-	CreateOrganisation(ctx context.Context, input *model.OrganisationInput) (*model.Organisation, error)
-}
-type QueryResolver interface {
-	GetCurrentUser(ctx context.Context) (*model.User, error)
-	GetOrganisation(ctx context.Context, organisationID string) (*model.Organisation, error)
+	CreateAccount(ctx context.Context, input model.NewAccount) (*model.Account, error)
 }
 
 type executableSchema struct {
@@ -114,6 +102,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Account.name":
+		if e.complexity.Account.Name == nil {
+			break
+		}
+
+		return e.complexity.Account.Name(childComplexity), true
+
+	case "Account.ownerId":
+		if e.complexity.Account.OwnerID == nil {
+			break
+		}
+
+		return e.complexity.Account.OwnerID(childComplexity), true
+
+	case "Account.type":
+		if e.complexity.Account.Type == nil {
+			break
+		}
+
+		return e.complexity.Account.Type(childComplexity), true
 
 	case "Entity.findOrganisationByID":
 		if e.complexity.Entity.FindOrganisationByID == nil {
@@ -139,31 +148,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Entity.FindUserByID(childComplexity, args["id"].(string)), true
 
-	case "Mutation.createOrganisation":
-		if e.complexity.Mutation.CreateOrganisation == nil {
+	case "Mutation.createAccount":
+		if e.complexity.Mutation.CreateAccount == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createOrganisation_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createAccount_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateOrganisation(childComplexity, args["input"].(*model.OrganisationInput)), true
+		return e.complexity.Mutation.CreateAccount(childComplexity, args["input"].(model.NewAccount)), true
 
-	case "Organisation.contactEmail":
-		if e.complexity.Organisation.ContactEmail == nil {
+	case "Organisation.accounts":
+		if e.complexity.Organisation.Accounts == nil {
 			break
 		}
 
-		return e.complexity.Organisation.ContactEmail(childComplexity), true
-
-	case "Organisation.createdAt":
-		if e.complexity.Organisation.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Organisation.CreatedAt(childComplexity), true
+		return e.complexity.Organisation.Accounts(childComplexity), true
 
 	case "Organisation.id":
 		if e.complexity.Organisation.ID == nil {
@@ -171,32 +173,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organisation.ID(childComplexity), true
-
-	case "Organisation.name":
-		if e.complexity.Organisation.Name == nil {
-			break
-		}
-
-		return e.complexity.Organisation.Name(childComplexity), true
-
-	case "Query.getCurrentUser":
-		if e.complexity.Query.GetCurrentUser == nil {
-			break
-		}
-
-		return e.complexity.Query.GetCurrentUser(childComplexity), true
-
-	case "Query.getOrganisation":
-		if e.complexity.Query.GetOrganisation == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getOrganisation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetOrganisation(childComplexity, args["organisationId"].(string)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -217,19 +193,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.__resolve_entities(childComplexity, args["representations"].([]map[string]interface{})), true
 
-	case "User.createdAt":
-		if e.complexity.User.CreatedAt == nil {
+	case "User.accounts":
+		if e.complexity.User.Accounts == nil {
 			break
 		}
 
-		return e.complexity.User.CreatedAt(childComplexity), true
-
-	case "User.firstName":
-		if e.complexity.User.FirstName == nil {
-			break
-		}
-
-		return e.complexity.User.FirstName(childComplexity), true
+		return e.complexity.User.Accounts(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -237,41 +206,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
-
-	case "User.lastName":
-		if e.complexity.User.LastName == nil {
-			break
-		}
-
-		return e.complexity.User.LastName(childComplexity), true
-
-	case "User.organisations":
-		if e.complexity.User.Organisations == nil {
-			break
-		}
-
-		return e.complexity.User.Organisations(childComplexity), true
-
-	case "UserOrganisation.keyName":
-		if e.complexity.UserOrganisation.KeyName == nil {
-			break
-		}
-
-		return e.complexity.UserOrganisation.KeyName(childComplexity), true
-
-	case "UserOrganisation.name":
-		if e.complexity.UserOrganisation.Name == nil {
-			break
-		}
-
-		return e.complexity.UserOrganisation.Name(childComplexity), true
-
-	case "UserOrganisation.role":
-		if e.complexity.UserOrganisation.Role == nil {
-			break
-		}
-
-		return e.complexity.UserOrganisation.Role(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity.Service.SDL == nil {
@@ -348,40 +282,36 @@ var sources = []*ast.Source{
 #
 # https://gqlgen.com/getting-started/
 
+enum AccountType {
+  CURRENT_ACCOUNT
+  JOINT_ACCOUNT
+  SAVINGS_ACCOUNT
+}
 
-type Organisation @key(fields: "id") {
-  id: ID!
+input NewAccount {
   name: String!
-  createdAt: String
-  contactEmail: String
+  type: AccountType!
+
 }
 
-type UserOrganisation {
+type Account {
+  ownerId: ID
   name: String!
-  keyName: String
-  role: String
+  type: AccountType!
 }
 
-type User @key(fields: "id") {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  organisations: [UserOrganisation]
-  createdAt: String
+extend type User @key(fields: "id") {
+  id: String! @external
+  accounts: [Account]
 }
 
-input OrganisationInput {
-  name: String!
-  contactEmail: String!
-}
-
-type Query {
-  getCurrentUser: User!
-  getOrganisation(organisationId: ID!): Organisation!
+extend type Organisation @key(fields: "id") {
+  id: String! @external
+  accounts: [Account]
 }
 
 type Mutation {
-  createOrganisation(input: OrganisationInput): Organisation!
+  createAccount(input: NewAccount!): Account!
 }
 `, BuiltIn: false},
 	{Name: "federation/directives.graphql", Input: `
@@ -400,8 +330,8 @@ union _Entity = Organisation | User
 
 # fake type to build resolver interfaces for users to implement
 type Entity {
-		findOrganisationByID(id: ID!,): Organisation!
-	findUserByID(id: ID!,): User!
+		findOrganisationByID(id: String!,): Organisation!
+	findUserByID(id: String!,): User!
 
 }
 
@@ -427,7 +357,7 @@ func (ec *executionContext) field_Entity_findOrganisationByID_args(ctx context.C
 	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -442,7 +372,7 @@ func (ec *executionContext) field_Entity_findUserByID_args(ctx context.Context, 
 	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -451,13 +381,13 @@ func (ec *executionContext) field_Entity_findUserByID_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createOrganisation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.OrganisationInput
+	var arg0 model.NewAccount
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOOrganisationInput2ᚖmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx, tmp)
+		arg0, err = ec.unmarshalNNewAccount2subgraphᚋaccountᚋgraphᚋmodelᚐNewAccount(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -493,21 +423,6 @@ func (ec *executionContext) field_Query__entities_args(ctx context.Context, rawA
 		}
 	}
 	args["representations"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getOrganisation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["organisationId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organisationId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["organisationId"] = arg0
 	return args, nil
 }
 
@@ -549,6 +464,108 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Account_ownerId(ctx context.Context, field graphql.CollectedField, obj *model.Account) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Account_name(ctx context.Context, field graphql.CollectedField, obj *model.Account) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Account_type(ctx context.Context, field graphql.CollectedField, obj *model.Account) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.AccountType)
+	fc.Result = res
+	return ec.marshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Entity_findOrganisationByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -588,7 +605,7 @@ func (ec *executionContext) _Entity_findOrganisationByID(ctx context.Context, fi
 	}
 	res := resTmp.(*model.Organisation)
 	fc.Result = res
-	return ec.marshalNOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
+	return ec.marshalNOrganisation2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Entity_findUserByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -630,10 +647,10 @@ func (ec *executionContext) _Entity_findUserByID(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖmanagementᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createOrganisation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -650,7 +667,7 @@ func (ec *executionContext) _Mutation_createOrganisation(ctx context.Context, fi
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createOrganisation_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_createAccount_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -658,7 +675,7 @@ func (ec *executionContext) _Mutation_createOrganisation(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrganisation(rctx, args["input"].(*model.OrganisationInput))
+		return ec.resolvers.Mutation().CreateAccount(rctx, args["input"].(model.NewAccount))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -670,9 +687,9 @@ func (ec *executionContext) _Mutation_createOrganisation(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Organisation)
+	res := resTmp.(*model.Account)
 	fc.Result = res
-	return ec.marshalNOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
+	return ec.marshalNAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Organisation_id(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
@@ -707,45 +724,10 @@ func (ec *executionContext) _Organisation_id(ctx context.Context, field graphql.
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Organisation_name(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Organisation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Organisation_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
+func (ec *executionContext) _Organisation_accounts(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -763,7 +745,7 @@ func (ec *executionContext) _Organisation_createdAt(ctx context.Context, field g
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
+		return obj.Accounts, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -772,118 +754,9 @@ func (ec *executionContext) _Organisation_createdAt(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.([]*model.Account)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Organisation_contactEmail(ctx context.Context, field graphql.CollectedField, obj *model.Organisation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Organisation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ContactEmail, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getCurrentUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetCurrentUser(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖmanagementᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getOrganisation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getOrganisation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOrganisation(rctx, args["organisationId"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Organisation)
-	fc.Result = res
-	return ec.marshalNOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx, field.Selections, res)
+	return ec.marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query__entities(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1066,45 +939,10 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_firstName(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FirstName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_lastName(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_accounts(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1122,42 +960,7 @@ func (ec *executionContext) _User_lastName(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LastName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_organisations(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Organisations, nil
+		return obj.Accounts, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1166,140 +969,9 @@ func (ec *executionContext) _User_organisations(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.UserOrganisation)
+	res := resTmp.([]*model.Account)
 	fc.Result = res
-	return ec.marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _UserOrganisation_name(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "UserOrganisation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _UserOrganisation_keyName(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "UserOrganisation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.KeyName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _UserOrganisation_role(ctx context.Context, field graphql.CollectedField, obj *model.UserOrganisation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "UserOrganisation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) __Service_sdl(ctx context.Context, field graphql.CollectedField, obj *fedruntime.Service) (ret graphql.Marshaler) {
@@ -2456,8 +2128,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputOrganisationInput(ctx context.Context, obj interface{}) (model.OrganisationInput, error) {
-	var it model.OrganisationInput
+func (ec *executionContext) unmarshalInputNewAccount(ctx context.Context, obj interface{}) (model.NewAccount, error) {
+	var it model.NewAccount
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -2473,11 +2145,11 @@ func (ec *executionContext) unmarshalInputOrganisationInput(ctx context.Context,
 			if err != nil {
 				return it, err
 			}
-		case "contactEmail":
+		case "type":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contactEmail"))
-			it.ContactEmail, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2517,6 +2189,40 @@ func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, 
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var accountImplementors = []string{"Account"}
+
+func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, obj *model.Account) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, accountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Account")
+		case "ownerId":
+			out.Values[i] = ec._Account_ownerId(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Account_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "type":
+			out.Values[i] = ec._Account_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var entityImplementors = []string{"Entity"}
 
@@ -2587,8 +2293,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createOrganisation":
-			out.Values[i] = ec._Mutation_createOrganisation(ctx, field)
+		case "createAccount":
+			out.Values[i] = ec._Mutation_createAccount(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2619,15 +2325,8 @@ func (ec *executionContext) _Organisation(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "name":
-			out.Values[i] = ec._Organisation_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._Organisation_createdAt(ctx, field, obj)
-		case "contactEmail":
-			out.Values[i] = ec._Organisation_contactEmail(ctx, field, obj)
+		case "accounts":
+			out.Values[i] = ec._Organisation_accounts(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2654,34 +2353,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getCurrentUser":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getCurrentUser(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getOrganisation":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getOrganisation(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "_entities":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -2741,51 +2412,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "firstName":
-			out.Values[i] = ec._User_firstName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "lastName":
-			out.Values[i] = ec._User_lastName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "organisations":
-			out.Values[i] = ec._User_organisations(ctx, field, obj)
-		case "createdAt":
-			out.Values[i] = ec._User_createdAt(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var userOrganisationImplementors = []string{"UserOrganisation"}
-
-func (ec *executionContext) _UserOrganisation(ctx context.Context, sel ast.SelectionSet, obj *model.UserOrganisation) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userOrganisationImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserOrganisation")
-		case "name":
-			out.Values[i] = ec._UserOrganisation_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "keyName":
-			out.Values[i] = ec._UserOrganisation_keyName(ctx, field, obj)
-		case "role":
-			out.Values[i] = ec._UserOrganisation_role(ctx, field, obj)
+		case "accounts":
+			out.Values[i] = ec._User_accounts(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3071,6 +2699,30 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAccount2subgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v model.Account) graphql.Marshaler {
+	return ec._Account(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Account(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx context.Context, v interface{}) (model.AccountType, error) {
+	var res model.AccountType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAccountType2subgraphᚋaccountᚋgraphᚋmodelᚐAccountType(ctx context.Context, sel ast.SelectionSet, v model.AccountType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3086,26 +2738,16 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
+func (ec *executionContext) unmarshalNNewAccount2subgraphᚋaccountᚋgraphᚋmodelᚐNewAccount(ctx context.Context, v interface{}) (model.NewAccount, error) {
+	res, err := ec.unmarshalInputNewAccount(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) marshalNOrganisation2managementᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v model.Organisation) graphql.Marshaler {
+func (ec *executionContext) marshalNOrganisation2subgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v model.Organisation) graphql.Marshaler {
 	return ec._Organisation(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrganisation2ᚖmanagementᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.Organisation) graphql.Marshaler {
+func (ec *executionContext) marshalNOrganisation2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.Organisation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3130,11 +2772,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2managementᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2subgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖmanagementᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3515,63 +3157,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
-	res, err := graphql.UnmarshalBoolean(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
-	return graphql.MarshalBoolean(v)
-}
-
-func (ec *executionContext) unmarshalOBoolean2ᚖbool(ctx context.Context, v interface{}) (*bool, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalBoolean(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast.SelectionSet, v *bool) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalBoolean(*v)
-}
-
-func (ec *executionContext) unmarshalOOrganisationInput2ᚖmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx context.Context, v interface{}) (*model.OrganisationInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputOrganisationInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalString(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalString(v)
-}
-
-func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalString(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalString(*v)
-}
-
-func (ec *executionContext) marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx context.Context, sel ast.SelectionSet, v []*model.UserOrganisation) graphql.Marshaler {
+func (ec *executionContext) marshalOAccount2ᚕᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v []*model.Account) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3598,7 +3184,7 @@ func (ec *executionContext) marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOUserOrganisation2ᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx, sel, v[i])
+			ret[i] = ec.marshalOAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3612,11 +3198,74 @@ func (ec *executionContext) marshalOUserOrganisation2ᚕᚖmanagementᚋgraphᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalOUserOrganisation2ᚖmanagementᚋgraphᚋmodelᚐUserOrganisation(ctx context.Context, sel ast.SelectionSet, v *model.UserOrganisation) graphql.Marshaler {
+func (ec *executionContext) marshalOAccount2ᚖsubgraphᚋaccountᚋgraphᚋmodelᚐAccount(ctx context.Context, sel ast.SelectionSet, v *model.Account) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._UserOrganisation(ctx, sel, v)
+	return ec._Account(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
+	res, err := graphql.UnmarshalBoolean(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	return graphql.MarshalBoolean(v)
+}
+
+func (ec *executionContext) unmarshalOBoolean2ᚖbool(ctx context.Context, v interface{}) (*bool, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalBoolean(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast.SelectionSet, v *bool) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalID(*v)
+}
+
+func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalString(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalString(*v)
 }
 
 func (ec *executionContext) marshalO_Entity2githubᚗcomᚋ99designsᚋgqlgenᚋpluginᚋfederationᚋfedruntimeᚐEntity(ctx context.Context, sel ast.SelectionSet, v fedruntime.Entity) graphql.Marshaler {

@@ -3,7 +3,7 @@ import * as iam from '@aws-cdk/aws-iam';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
 
-export default class ManagementStack extends sst.Stack {
+export default class AccountStack extends sst.Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
 
@@ -34,7 +34,7 @@ export default class ManagementStack extends sst.Stack {
       },
     );
 
-    const api = new sst.Api(this, 'ManagementApi', {
+    const api = new sst.Api(this, 'AccountApi', {
       defaultAuthorizer: new apigAuthorizers.HttpJwtAuthorizer({
         identitySource: ['$request.header.authorization'],
         jwtAudience: [userPoolClientId.stringValue],

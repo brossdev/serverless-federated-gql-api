@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"management/graph/model"
+	"subgraph/management/graph/model"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"

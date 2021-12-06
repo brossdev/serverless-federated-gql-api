@@ -7,10 +7,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"management/graph/generated"
-	"management/graph/model"
-	"management/internal/organisations"
-	"management/internal/users"
+	"subgraph/management/graph/generated"
+	"subgraph/management/graph/model"
+	"subgraph/management/internal/organisations"
+	"subgraph/management/internal/users"
 )
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.OrganisationInput) (*model.Organisation, error) {

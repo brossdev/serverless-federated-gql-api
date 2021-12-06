@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 	"os"
-	"subgraph/management/graph"
-	"subgraph/management/graph/generated"
+	"subgraph/account/graph"
+	"subgraph/account/graph/generated"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -59,15 +59,8 @@ func Handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 		// stdout and stderr are sent to AWS CloudWatch Logs
 		log.Printf("Gin cold start")
 		r := gin.Default()
-		// Setting up Gin
 		r.POST("/query", graphqlHandler())
 		r.GET("/playground", playgroundHandler())
-		r.GET("/ping", func(c *gin.Context) {
-			log.Println("Handler!!")
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
 		r.GET("/graphql", graphqlHandler())
 
 		ginLambda = ginadapter.NewV2(r)
@@ -76,6 +69,5 @@ func Handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 }
 
 func main() {
-	// Setting up Gin
 	lambda.Start(Handler)
 }

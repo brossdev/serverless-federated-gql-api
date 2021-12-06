@@ -3,20 +3,20 @@ import { format } from 'date-fns';
 
 export interface UserType {
   email: string;
-  sub: string;
+  id: string;
   firstName: string;
   lastName: string;
 }
 
 export const DB_MAP = {
   USER: {
-    putInput: ({ email, sub, firstName, lastName }: UserType) =>
+    putInput: ({ email, id, firstName, lastName }: UserType) =>
       marshall({
-        PK: `ACCOUNT#${sub}`,
-        SK: `ACCOUNT#${sub}`,
+        PK: `ACCOUNT#${id}`,
+        SK: `ACCOUNT#${id}`,
         firstName,
         lastName,
-        sub,
+        id,
         email,
         type: 'user',
         createdAt: format(new Date(), 'YYYY-MM-dd HH:mm:ss'),

@@ -1,4 +1,4 @@
-import ManagementStack from './Management';
+import AccountStack from './Account';
 
 export default function main(app) {
   // Set default runtime for all functions
@@ -6,5 +6,5 @@ export default function main(app) {
     runtime: 'go1.x',
   });
 
-  new ManagementStack(app, 'api');
+  new AccountStack(app, 'account');
 }
