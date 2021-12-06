@@ -15,9 +15,6 @@ This project was built as a proof of concept to test building a Federated GraphQ
 <img width="1244" alt="Screenshot 2021-12-06 at 19 42 16" src="https://user-images.githubusercontent.com/18420698/144911617-650c26cd-f86b-4b57-b50f-c5cbed90ad33.png">
 
 
-
-Diagram to follow
-
 ### Core Stack
 SST Stack written in typescript, responsible for deploying the core resources of the app
 
@@ -28,7 +25,7 @@ SST stack responsible for deploying a GraphQL Federated API written in Go
 SST stack responsible for deploying a GraphQL Federated API written in Go
 
 ### Frontend
-Basic React App written in typescript which is connected to the gateway lambda and userpool deploayed as part of the core stack. 
+Basic React App written in typescript which is connected to the gateway lambda and userpool deployed as part of the core stack. 
 
 ### Prerequisities
 
