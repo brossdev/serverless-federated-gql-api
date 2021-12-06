@@ -87,7 +87,7 @@ func TestUser(t *testing.T) {
 		}
 		c.MustPost(`query { getCurrentUser { firstName, lastName } }`, &resp)
 
-		assert.Equal(t, "boab", resp.GetCurrentUser.FirstName)
+		assert.Equal(t, "bob", resp.GetCurrentUser.FirstName)
 		assert.Equal(t, "ross", resp.GetCurrentUser.LastName)
 	})
 }
