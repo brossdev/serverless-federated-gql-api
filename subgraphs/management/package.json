@@ -7,7 +7,8 @@
     "start": "sst start --port 12578",
     "build": "sst build",
     "deploy": "sst deploy",
-    "remove": "sst remove"
+    "remove": "sst remove",
+    "go:test": "go test --cover ./..."
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.132.0"

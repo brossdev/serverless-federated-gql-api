@@ -18,7 +18,8 @@
     "type-check": "tsc -b",
     "validate": "scripts/validate",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache \"**/*.+(tsx|ts|js|jsx)\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:subgraphs": "scripts/test-subgraphs"
   },
   "keywords": [],
   "author": "",
