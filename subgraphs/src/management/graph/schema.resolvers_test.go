@@ -2,8 +2,8 @@ package graph
 
 import (
 	"context"
-	"management/graph/generated"
-	"management/graph/model"
+	"subgraphs/src/management/graph/generated"
+	"subgraphs/src/management/graph/model"
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
