@@ -18,7 +18,7 @@ type BankAccount {
   name: String!
   accountNumber: String!
   type: BankAccountType!
-  balance:Int!
+  balance: Int!
 }
 
 type UserBankAccount {
