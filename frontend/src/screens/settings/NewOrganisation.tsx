@@ -5,7 +5,7 @@ import CREATE_ORGANISATION_MUTATION from '../../api/graphql/mutations/createOrga
 import CURRENT_USER_QUERY from '../../api/graphql/queries/currentUser';
 import { getErrorMessage } from '../../lib/error-lib';
 
-const OrganisationSettings = () => {
+const CreateOrganisation = () => {
   const [name, setName] = React.useState('');
   const [contactEmail, setContactEmail] = React.useState('');
   const [createOrganisation, { loading, error }] = useMutation(
@@ -62,4 +62,4 @@ const OrganisationSettings = () => {
   );
 };
 
-export default OrganisationSettings;
+export default CreateOrganisation;
