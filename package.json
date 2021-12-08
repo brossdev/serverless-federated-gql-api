@@ -5,12 +5,11 @@
   "main": "index.js",
   "workspaces": [
     "core",
-    "subgraphs/*",
+    "subgraphs",
     "frontend"
   ],
   "scripts": {
-    "subgraph:management": "npm run start -w subgraphs/management",
-    "subgraph:account": "npm run start -w subgraphs/account",
+    "subgraphs": "npm run start -w subgraphs",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
     "frontend": "npm run start -w frontend",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",

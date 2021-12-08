@@ -1,4 +1,4 @@
-module subgraph
+module subgraphs
 
 go 1.17
 
