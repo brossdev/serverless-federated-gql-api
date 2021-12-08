@@ -40,7 +40,7 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 		switch typeName {
 
 		case "Organisation":
-			id0, err := ec.unmarshalNString2string(ctx, rep["id"])
+			id0, err := ec.unmarshalNID2string(ctx, rep["id"])
 			if err != nil {
 				return nil, errors.New(fmt.Sprintf("Field %s undefined in schema.", "id"))
 			}
@@ -54,7 +54,7 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 			list = append(list, entity)
 
 		case "User":
-			id0, err := ec.unmarshalNString2string(ctx, rep["id"])
+			id0, err := ec.unmarshalNID2string(ctx, rep["id"])
 			if err != nil {
 				return nil, errors.New(fmt.Sprintf("Field %s undefined in schema.", "id"))
 			}

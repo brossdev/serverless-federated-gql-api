@@ -2,33 +2,42 @@
 #
 # https://gqlgen.com/getting-started/
 
-enum AccountType {
+enum BankAccountType {
   CURRENT_ACCOUNT
   JOINT_ACCOUNT
   SAVINGS_ACCOUNT
 }
 
-input NewAccount {
+input BankAccountInput {
   name: String!
-  type: AccountType!
+  type: BankAccountType!
 }
 
-type Account {
+type BankAccount {
   ownerId: ID
   name: String!
-  type: AccountType!
+  accountNumber: String!
+  type: BankAccountType!
+  balance:Int!
+}
+
+type UserBankAccount {
+  accountNumber: String!
+  name: String!
+  type: BankAccountType!
+  balance: Int!
 }
 
 extend type User @key(fields: "id") {
   id: ID! @external
-  accounts: [Account]
+  accounts: [UserBankAccount]
 }
 
 extend type Organisation @key(fields: "id") {
   id: ID! @external
-  accounts: [Account]
+  accounts: [BankAccount]
 }
 
 type Mutation {
-  createAccount(input: NewAccount!): Account!
+  createAccount(input: BankAccountInput!): BankAccount!
 }

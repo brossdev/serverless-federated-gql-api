@@ -10,7 +10,7 @@ import (
 	"subgraph/account/graph/model"
 )
 
-func (r *mutationResolver) CreateAccount(ctx context.Context, input model.NewAccount) (*model.Account, error) {
+func (r *mutationResolver) CreateAccount(ctx context.Context, input model.BankAccountInput) (*model.BankAccount, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

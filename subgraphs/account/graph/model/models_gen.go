@@ -8,70 +8,79 @@ import (
 	"strconv"
 )
 
-type Account struct {
-	OwnerID *string     `json:"ownerId"`
-	Name    string      `json:"name"`
-	Type    AccountType `json:"type"`
+type BankAccount struct {
+	OwnerID       *string         `json:"ownerId"`
+	Name          string          `json:"name"`
+	AccountNumber string          `json:"accountNumber"`
+	Type          BankAccountType `json:"type"`
+	Balance       int             `json:"balance"`
 }
 
-type NewAccount struct {
-	Name string      `json:"name"`
-	Type AccountType `json:"type"`
+type BankAccountInput struct {
+	Name string          `json:"name"`
+	Type BankAccountType `json:"type"`
 }
 
 type Organisation struct {
-	ID       string     `json:"id"`
-	Accounts []*Account `json:"accounts"`
+	ID       string         `json:"id"`
+	Accounts []*BankAccount `json:"accounts"`
 }
 
 func (Organisation) IsEntity() {}
 
 type User struct {
-	ID       string     `json:"id"`
-	Accounts []*Account `json:"accounts"`
+	ID       string             `json:"id"`
+	Accounts []*UserBankAccount `json:"accounts"`
 }
 
 func (User) IsEntity() {}
 
-type AccountType string
-
-const (
-	AccountTypeCurrentAccount AccountType = "CURRENT_ACCOUNT"
-	AccountTypeJointAccount   AccountType = "JOINT_ACCOUNT"
-	AccountTypeSavingsAccount AccountType = "SAVINGS_ACCOUNT"
-)
-
-var AllAccountType = []AccountType{
-	AccountTypeCurrentAccount,
-	AccountTypeJointAccount,
-	AccountTypeSavingsAccount,
+type UserBankAccount struct {
+	AccountNumber string          `json:"accountNumber"`
+	Name          string          `json:"name"`
+	Type          BankAccountType `json:"type"`
+	Balance       int             `json:"balance"`
 }
 
-func (e AccountType) IsValid() bool {
+type BankAccountType string
+
+const (
+	BankAccountTypeCurrentAccount BankAccountType = "CURRENT_ACCOUNT"
+	BankAccountTypeJointAccount   BankAccountType = "JOINT_ACCOUNT"
+	BankAccountTypeSavingsAccount BankAccountType = "SAVINGS_ACCOUNT"
+)
+
+var AllBankAccountType = []BankAccountType{
+	BankAccountTypeCurrentAccount,
+	BankAccountTypeJointAccount,
+	BankAccountTypeSavingsAccount,
+}
+
+func (e BankAccountType) IsValid() bool {
 	switch e {
-	case AccountTypeCurrentAccount, AccountTypeJointAccount, AccountTypeSavingsAccount:
+	case BankAccountTypeCurrentAccount, BankAccountTypeJointAccount, BankAccountTypeSavingsAccount:
 		return true
 	}
 	return false
 }
 
-func (e AccountType) String() string {
+func (e BankAccountType) String() string {
 	return string(e)
 }
 
-func (e *AccountType) UnmarshalGQL(v interface{}) error {
+func (e *BankAccountType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = AccountType(str)
+	*e = BankAccountType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AccountType", str)
+		return fmt.Errorf("%s is not a valid BankAccountType", str)
 	}
 	return nil
 }
 
-func (e AccountType) MarshalGQL(w io.Writer) {
+func (e BankAccountType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
