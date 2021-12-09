@@ -7,14 +7,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"subgraphs/src/management/db/organisations"
+	"subgraphs/src/management/db/users"
 	"subgraphs/src/management/graph/generated"
 	"subgraphs/src/management/graph/model"
-	"subgraphs/src/management/internal/organisations"
-	"subgraphs/src/management/internal/users"
 )
 
 func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.OrganisationInput) (*model.Organisation, error) {
-	// parse organisation name to replace spaces with dashes and lower case text
 	userId := ctx.Value("user").(string)
 	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, userId, *input)
 
