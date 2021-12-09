@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 interface AccountType {
   name: string;
@@ -20,12 +20,15 @@ const Accounts = ({ accounts }: AccountProps) => {
       </button>
       <div>List of Your Accounts</div>
       <section>
-        {accounts.map((account) => (
+        {accounts?.map((account) => (
           <div key={account.number}>
             <p>{account.name}</p>
             <p>{account.balance}</p>
           </div>
         ))}
+      </section>
+      <section>
+        <Outlet />
       </section>
     </div>
   );

@@ -5,6 +5,7 @@ import Nav from './components/Nav';
 import Dashboard from './screens/Dashboard';
 import Customers from './screens/Customers';
 import Accounts from './screens/Accounts';
+import NewAccount from './screens/NewAccount';
 import Vendors from './screens/Vendors';
 import Schedule from './screens/Schedule';
 import Settings from './screens/settings/Settings';
@@ -41,7 +42,12 @@ const AuthenticatedApp = ({ logout }: AuthAppProps) => {
       <Nav navLinks={navLinks} user={user.getCurrentUser} logout={logout} />
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/accounts" element={<Accounts />} />
+        <Route
+          path="accounts"
+          element={<Accounts accounts={user.getCurrentUser.accounts} />}
+        >
+          <Route path="new" element={<NewAccount />} />
+        </Route>
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/vendors" element={<Vendors />} />

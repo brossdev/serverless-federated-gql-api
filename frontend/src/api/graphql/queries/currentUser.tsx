@@ -9,6 +9,9 @@ const CurrentUser = gql`
         name
         role
       }
+      accounts {
+        name
+      }
     }
   }
 `;

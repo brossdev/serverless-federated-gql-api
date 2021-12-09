@@ -2,25 +2,30 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import CREATE_ACCOUNT_MUTATION from '../api/graphql/mutations/createAccount';
+import {
+  BankAccountEnum,
+  CreatAccountInput,
+  CreateAccountData,
+} from '../api/graphql/mutations/createAccount';
 import CURRENT_USER_QUERY from '../api/graphql/queries/currentUser';
 import { getErrorMessage } from '../lib/error-lib';
 
-type AccountTypes = 'current' | 'savings';
-
 type AccountTypeElement = HTMLSelectElement & {
-  value: AccountTypes;
+  value: BankAccountEnum;
 };
 
 const CreateAccount = () => {
   const [name, setName] = React.useState('');
-  const [type, setType] = React.useState<AccountTypes | undefined>();
-  const [createAccount, { loading, error }] = useMutation(
-    CREATE_ACCOUNT_MUTATION,
-    {
-      refetchQueries: [CURRENT_USER_QUERY],
-      awaitRefetchQueries: true,
-    },
+  const [type, setType] = React.useState<BankAccountEnum>(
+    BankAccountEnum.CURRENT,
   );
+  const [createAccount, { loading, error }] = useMutation<
+    CreateAccountData,
+    CreatAccountInput
+  >(CREATE_ACCOUNT_MUTATION, {
+    refetchQueries: [CURRENT_USER_QUERY],
+    awaitRefetchQueries: true,
+  });
   const navigate = useNavigate();
 
   async function handleSubmit(event: React.SyntheticEvent) {
@@ -41,6 +46,7 @@ const CreateAccount = () => {
   ) {
     event.preventDefault();
     const selection = event.target.value;
+    console.log({ selection });
     setType(selection);
   }
 
@@ -61,9 +67,13 @@ const CreateAccount = () => {
           required
         />
         <label htmlFor="type">Account Type</label>
-        <select id="type" defaultValue="current" onChange={handleAccountChange}>
-          <option value={'current'}>Current</option>
-          <option value={'savings'}>Savings</option>
+        <select
+          id="type"
+          defaultValue={BankAccountEnum.CURRENT}
+          onChange={handleAccountChange}
+        >
+          <option value={BankAccountEnum.CURRENT}>Current</option>
+          <option value={BankAccountEnum.SAVINGS}>Savings</option>
         </select>
         <button type="submit">Create Account</button>
       </form>
