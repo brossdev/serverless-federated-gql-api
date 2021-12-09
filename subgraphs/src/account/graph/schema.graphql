@@ -1,11 +1,7 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
 enum BankAccountType {
-  CURRENT_ACCOUNT
-  JOINT_ACCOUNT
-  SAVINGS_ACCOUNT
+  CURRENT
+  JOINT
+  SAVINGS
 }
 
 input BankAccountInput {
@@ -16,21 +12,14 @@ input BankAccountInput {
 type BankAccount {
   ownerId: ID
   name: String!
-  accountNumber: String!
-  type: BankAccountType!
-  balance: Int!
-}
-
-type UserBankAccount {
-  accountNumber: String!
-  name: String!
+  accountId: ID!
   type: BankAccountType!
   balance: Int!
 }
 
 extend type User @key(fields: "id") {
   id: ID! @external
-  accounts: [UserBankAccount]
+  accounts: [BankAccount]
 }
 
 extend type Organisation @key(fields: "id") {

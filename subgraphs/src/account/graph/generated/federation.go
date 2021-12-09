@@ -65,6 +65,11 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 				return nil, err
 			}
 
+			entity.ID, err = ec.unmarshalNID2string(ctx, rep["id"])
+			if err != nil {
+				return nil, err
+			}
+
 			list = append(list, entity)
 
 		default:

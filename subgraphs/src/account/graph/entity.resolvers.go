@@ -15,7 +15,11 @@ func (r *entityResolver) FindOrganisationByID(ctx context.Context, id string) (*
 }
 
 func (r *entityResolver) FindUserByID(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	fmt.Printf("GET USER ID BY CONTEXT ----- %v", ctx)
+	user := &model.User{
+		ID: id,
+	}
+	return user, nil
 }
 
 // Entity returns generated.EntityResolver implementation.

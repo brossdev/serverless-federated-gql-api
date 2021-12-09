@@ -9,11 +9,11 @@ import (
 )
 
 type BankAccount struct {
-	OwnerID       *string         `json:"ownerId"`
-	Name          string          `json:"name"`
-	AccountNumber string          `json:"accountNumber"`
-	Type          BankAccountType `json:"type"`
-	Balance       int             `json:"balance"`
+	OwnerID   *string         `json:"ownerId"`
+	Name      string          `json:"name"`
+	AccountID string          `json:"accountId"`
+	Type      BankAccountType `json:"type"`
+	Balance   int             `json:"balance"`
 }
 
 type BankAccountInput struct {
@@ -29,36 +29,29 @@ type Organisation struct {
 func (Organisation) IsEntity() {}
 
 type User struct {
-	ID       string             `json:"id"`
-	Accounts []*UserBankAccount `json:"accounts"`
+	ID       string         `json:"id"`
+	Accounts []*BankAccount `json:"accounts"`
 }
 
 func (User) IsEntity() {}
 
-type UserBankAccount struct {
-	AccountNumber string          `json:"accountNumber"`
-	Name          string          `json:"name"`
-	Type          BankAccountType `json:"type"`
-	Balance       int             `json:"balance"`
-}
-
 type BankAccountType string
 
 const (
-	BankAccountTypeCurrentAccount BankAccountType = "CURRENT_ACCOUNT"
-	BankAccountTypeJointAccount   BankAccountType = "JOINT_ACCOUNT"
-	BankAccountTypeSavingsAccount BankAccountType = "SAVINGS_ACCOUNT"
+	BankAccountTypeCurrent BankAccountType = "CURRENT"
+	BankAccountTypeJoint   BankAccountType = "JOINT"
+	BankAccountTypeSavings BankAccountType = "SAVINGS"
 )
 
 var AllBankAccountType = []BankAccountType{
-	BankAccountTypeCurrentAccount,
-	BankAccountTypeJointAccount,
-	BankAccountTypeSavingsAccount,
+	BankAccountTypeCurrent,
+	BankAccountTypeJoint,
+	BankAccountTypeSavings,
 }
 
 func (e BankAccountType) IsValid() bool {
 	switch e {
-	case BankAccountTypeCurrentAccount, BankAccountTypeJointAccount, BankAccountTypeSavingsAccount:
+	case BankAccountTypeCurrent, BankAccountTypeJoint, BankAccountTypeSavings:
 		return true
 	}
 	return false
