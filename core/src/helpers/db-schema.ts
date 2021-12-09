@@ -19,7 +19,7 @@ export const DB_MAP = {
         id,
         email,
         type: 'user',
-        createdAt: format(new Date(), 'YYYY-MM-dd HH:mm:ss'),
+        createdAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       }),
   },
 };
