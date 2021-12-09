@@ -52,7 +52,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateOrganisation func(childComplexity int, input *model.OrganisationInput) int
+		CreateOrganisation func(childComplexity int, input model.OrganisationInput) int
 	}
 
 	Organisation struct {
@@ -93,7 +93,7 @@ type EntityResolver interface {
 	FindUserByID(ctx context.Context, id string) (*model.User, error)
 }
 type MutationResolver interface {
-	CreateOrganisation(ctx context.Context, input *model.OrganisationInput) (*model.Organisation, error)
+	CreateOrganisation(ctx context.Context, input model.OrganisationInput) (*model.Organisation, error)
 }
 type QueryResolver interface {
 	GetCurrentUser(ctx context.Context) (*model.User, error)
@@ -149,7 +149,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateOrganisation(childComplexity, args["input"].(*model.OrganisationInput)), true
+		return e.complexity.Mutation.CreateOrganisation(childComplexity, args["input"].(model.OrganisationInput)), true
 
 	case "Organisation.contactEmail":
 		if e.complexity.Organisation.ContactEmail == nil {
@@ -380,7 +380,7 @@ extend type Query {
 }
 
 type Mutation {
-  createOrganisation(input: OrganisationInput): Organisation!
+  createOrganisation(input: OrganisationInput!): Organisation!
 }
 `, BuiltIn: false},
 	{Name: "federation/directives.graphql", Input: `
@@ -453,10 +453,10 @@ func (ec *executionContext) field_Entity_findUserByID_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_createOrganisation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.OrganisationInput
+	var arg0 model.OrganisationInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOOrganisationInput2ᚖsubgraphsᚋsrcᚋmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx, tmp)
+		arg0, err = ec.unmarshalNOrganisationInput2subgraphsᚋsrcᚋmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -657,7 +657,7 @@ func (ec *executionContext) _Mutation_createOrganisation(ctx context.Context, fi
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrganisation(rctx, args["input"].(*model.OrganisationInput))
+		return ec.resolvers.Mutation().CreateOrganisation(rctx, args["input"].(model.OrganisationInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3114,6 +3114,11 @@ func (ec *executionContext) marshalNOrganisation2ᚖsubgraphsᚋsrcᚋmanagement
 	return ec._Organisation(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNOrganisationInput2subgraphsᚋsrcᚋmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx context.Context, v interface{}) (model.OrganisationInput, error) {
+	res, err := ec.unmarshalInputOrganisationInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3536,14 +3541,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
-}
-
-func (ec *executionContext) unmarshalOOrganisationInput2ᚖsubgraphsᚋsrcᚋmanagementᚋgraphᚋmodelᚐOrganisationInput(ctx context.Context, v interface{}) (*model.OrganisationInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputOrganisationInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

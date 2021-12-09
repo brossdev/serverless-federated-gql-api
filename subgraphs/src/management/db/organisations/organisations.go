@@ -16,7 +16,7 @@ import (
 )
 
 type DBOrganisation struct {
-	*model.OrganisationInput
+	model.OrganisationInput
 	PK        string
 	SK        string
 	ID        string
@@ -39,7 +39,7 @@ func CreateOrganisation(ctx context.Context, ddb dynamodbiface.DynamoDBAPI, tabl
 	orgKey := fmt.Sprintf("ACCOUNT#%s", orgName)
 	createdAt := time.Now().Unix()
 	dbOrg := DBOrganisation{
-		&organisation,
+		organisation,
 		orgKey,
 		orgKey,
 		orgName,

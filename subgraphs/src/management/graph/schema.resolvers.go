@@ -13,9 +13,9 @@ import (
 	"subgraphs/src/management/graph/model"
 )
 
-func (r *mutationResolver) CreateOrganisation(ctx context.Context, input *model.OrganisationInput) (*model.Organisation, error) {
+func (r *mutationResolver) CreateOrganisation(ctx context.Context, input model.OrganisationInput) (*model.Organisation, error) {
 	userId := ctx.Value("user").(string)
-	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, userId, *input)
+	org, err := organisations.CreateOrganisation(ctx, r.DB, r.TableName, userId, input)
 
 	if err != nil {
 		fmt.Println("Could not create new organisation")

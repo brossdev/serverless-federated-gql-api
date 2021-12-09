@@ -34,5 +34,5 @@ extend type Query {
 }
 
 type Mutation {
-  createOrganisation(input: OrganisationInput): Organisation!
+  createOrganisation(input: OrganisationInput!): Organisation!
 }
