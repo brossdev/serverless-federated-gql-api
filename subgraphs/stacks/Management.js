@@ -55,7 +55,7 @@ export default class ManagementStack extends sst.Stack {
       actions: ['dynamodb:*'],
       effect: iam.Effect.ALLOW,
       resources: [
-        `arn:aws:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/${tableName}`,
+        `arn:aws:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/${tableName.stringValue}`,
       ],
     });
 
