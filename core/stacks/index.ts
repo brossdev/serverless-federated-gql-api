@@ -16,5 +16,7 @@ export default function main(app: sst.App): void {
 
   new StaticSiteStack(app, 'frontend', {
     api: gateway.api,
+    userPool: gateway.userPool,
+    userPoolClient: gateway.userPoolClient,
   });
 }

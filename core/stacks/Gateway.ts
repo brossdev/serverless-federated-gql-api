@@ -12,6 +12,10 @@ interface GatewayStackProps extends sst.StackProps {
 export default class GatewayStack extends sst.Stack {
   public readonly api: sst.ApolloApi;
 
+  public readonly userPool: cognito.UserPool;
+
+  public readonly userPoolClient: cognito.UserPoolClient;
+
   constructor(scope: sst.App, id: string, props: GatewayStackProps) {
     super(scope, id, props);
 
@@ -35,7 +39,7 @@ export default class GatewayStack extends sst.Stack {
     );
     postConfirmationFunction.attachPermissions([tablePermissions]);
 
-    const userPool = new cognito.UserPool(this, 'UserPool', {
+    this.userPool = new cognito.UserPool(this, 'UserPool', {
       selfSignUpEnabled: true,
       signInAliases: { email: true },
       standardAttributes: {
@@ -57,15 +61,15 @@ export default class GatewayStack extends sst.Stack {
       },
     });
 
-    const userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
-      userPool,
+    this.userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
+      userPool: this.userPool,
       authFlows: { userSrp: true, custom: true },
     });
     // Create a Apollo GraphQL API
     this.api = new sst.ApolloApi(this, 'FederatedApi', {
       defaultAuthorizer: new apigAuthorizers.HttpUserPoolAuthorizer({
-        userPool,
-        userPoolClients: [userPoolClient],
+        userPool: this.userPool,
+        userPoolClients: [this.userPoolClient],
       }),
       server: 'src/lambda.handler',
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
@@ -84,7 +88,7 @@ export default class GatewayStack extends sst.Stack {
     new ssm.StringParameter(this, `${this.stackName}-userpool`, {
       parameterName: '/serverless-fed-graphql/userpool',
       description: 'serverless graphql userpool',
-      stringValue: userPool.userPoolId,
+      stringValue: this.userPool.userPoolId,
       type: ssm.ParameterType.STRING,
       tier: ssm.ParameterTier.STANDARD,
       allowedPattern: '.*',
@@ -93,7 +97,7 @@ export default class GatewayStack extends sst.Stack {
     new ssm.StringParameter(this, `${this.stackName}-userpool-client`, {
       parameterName: '/serverless-fed-graphql/userpool-client',
       description: 'serverless graphql userpool client',
-      stringValue: userPoolClient.userPoolClientId,
+      stringValue: this.userPoolClient.userPoolClientId,
       type: ssm.ParameterType.STRING,
       tier: ssm.ParameterTier.STANDARD,
       allowedPattern: '.*',
@@ -101,8 +105,8 @@ export default class GatewayStack extends sst.Stack {
     // Show the endpoint in the output
     this.addOutputs({
       ApiEndpoint: this.api.url,
-      UserPoolId: userPool.userPoolId,
-      UserPoolClientId: userPoolClient.userPoolClientId,
+      UserPoolId: this.userPool.userPoolId,
+      UserPoolClientId: this.userPoolClient.userPoolClientId,
     });
   }
 }
