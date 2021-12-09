@@ -19,7 +19,7 @@ const OrganisationSettings = ({ organisations }: OrganisationProps) => {
       </button>
       <div>List of Organisations</div>
       <section>
-        {organisations.map((org) => (
+        {organisations?.map((org) => (
           <div key={org.name}>
             <p>{org.name}</p>
             <p>{org.role}</p>

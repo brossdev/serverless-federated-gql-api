@@ -2,8 +2,8 @@ subgraphs:
   management:
     routing_url: https://??????????.execute-api.eu-west-1.amazonaws.com/query
     schema:
-      file: ./subgraphs/management/graph/schema.graphql
+      file: ./subgraphs/src/management/graph/schema.graphql
   account:
-    routing_url: https://???????????.execute-api.eu-west-1.amazonaws.com/query
+    routing_url: https://??????????.execute-api.eu-west-1.amazonaws.com/query
     schema:
-      file: ./subgraphs/account/graph/schema.graphql
+      file: ./subgraphs/src/account/graph/schema.graphql
