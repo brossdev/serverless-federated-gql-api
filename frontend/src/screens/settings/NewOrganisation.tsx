@@ -2,19 +2,23 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import CREATE_ORGANISATION_MUTATION from '../../api/graphql/mutations/createOrganisation';
+import type {
+  CreateOrganisationInput,
+  OrganisationData,
+} from '../../api/graphql/mutations/createOrganisation';
 import CURRENT_USER_QUERY from '../../api/graphql/queries/currentUser';
 import { getErrorMessage } from '../../lib/error-lib';
 
 const CreateOrganisation = () => {
   const [name, setName] = React.useState('');
   const [contactEmail, setContactEmail] = React.useState('');
-  const [createOrganisation, { loading, error }] = useMutation(
-    CREATE_ORGANISATION_MUTATION,
-    {
-      refetchQueries: [CURRENT_USER_QUERY],
-      awaitRefetchQueries: true,
-    },
-  );
+  const [createOrganisation, { loading, error }] = useMutation<
+    OrganisationData,
+    CreateOrganisationInput
+  >(CREATE_ORGANISATION_MUTATION, {
+    refetchQueries: [CURRENT_USER_QUERY],
+    awaitRefetchQueries: true,
+  });
   const navigate = useNavigate();
 
   async function handleSubmit(event: React.SyntheticEvent) {

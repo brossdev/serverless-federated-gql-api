@@ -1,8 +1,13 @@
 import { gql } from '@apollo/client';
 
-export interface OrganisationInput {
+export interface CreateOrganisationInput {
+  input: {
+    name: string;
+    contactEmail: string;
+  };
+}
+export interface OrganisationData {
   name: string;
-  contactEmail: string;
 }
 
 const CreateOrganisation = gql`
