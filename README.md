@@ -11,6 +11,13 @@ This project was built as a proof of concept to test building a Federated GraphQ
 - Typescript
 - Go
 
+## Git Hooks
+
+This project takes advantage of git hooks using Husky. Currently there are two hooks configured in the project
+
+- pre commit - used to run custom eslint and prettier config for consistancy across the full repository
+- pre push - used to run Go and JS tests across the repository before allowing push to remote
+
 ## Infrastructure
 
 <img width="1244" alt="Screenshot 2021-12-06 at 19 42 16" src="https://user-images.githubusercontent.com/18420698/144911617-650c26cd-f86b-4b57-b50f-c5cbed90ad33.png">
@@ -19,13 +26,27 @@ This project was built as a proof of concept to test building a Federated GraphQ
 
 SST Stack written in typescript, responsible for deploying the core resources of the app
 
-### Management SubGraph
+Cognito UserPool
+Post Confirmation Lambda handler ( Typescript )
+DynamoDB Table
+GraphQL Federated Gateway Lambda ( Typescript )
 
-SST stack responsible for deploying a GraphQL Federated API written in Go
 
-### Account SubGraph
+### SubGraph Stack
 
-SST stack responsible for deploying a GraphQL Federated API written in Go
+SST Stack written in Javascript, responsible for deploying each of the federated GraphQL Subgraphs
+
+## Management SubGraph
+
+The Management Subgraph is responsible for handling the account and organisation management for the app. Creation and management of user accoounts and organisation management is handled through this subgraph
+
+GraphQL Federated Management Subgraph Lambda ( Go )
+
+## Account SubGraph
+
+The Account Subgraph is responsible for handling the creation and management of bank accounts and services for the app. 
+
+GraphQL Federated Account Subgraph Lambda ( Go )
 
 ### Frontend
 
@@ -70,7 +91,7 @@ SKIP_PREFLIGHT_CHECK=true
 $ npm run core
 ```
 
-in a fourth terminal window
+in a seperate terminal window
 
 ```bash
 $ npm run frontend
