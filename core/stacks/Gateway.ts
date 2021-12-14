@@ -61,9 +61,33 @@ export default class GatewayStack extends sst.Stack {
       },
     });
 
+    new cognito.UserPoolResourceServer(this, 'UserPoolResourceServer', {
+      identifier: 'https://resource-server/',
+      userPoolResourceServerName: `${this.stage}-userpool-resource-server`,
+      userPool: this.userPool,
+      scopes: [
+        {
+          scopeDescription: 'organisation admin',
+          scopeName: 'org-admin',
+        },
+        {
+          scopeDescription: 'organisation user',
+          scopeName: 'org-user',
+        },
+      ],
+    });
     this.userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
       userPool: this.userPool,
       authFlows: { userSrp: true, custom: true },
+      oAuth: {
+        flows: {
+          implicitCodeGrant: true,
+        },
+        scopes: [
+          cognito.OAuthScope.custom('https://resource-server//org-admin'),
+          cognito.OAuthScope.custom('https://resource-server//org-user'),
+        ],
+      },
     });
     // Create a Apollo GraphQL API
     this.api = new sst.ApolloApi(this, 'FederatedApi', {
