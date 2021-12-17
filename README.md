@@ -2,6 +2,9 @@
 
 This project was built as a proof of concept to test building a Federated GraphQL API using AWS Lambda and SST Framework along with some developer tooling i wanted to experiment with. This is not designed to be production ready but does use some useful developer tooling such git hooks and a root level Typescript and Eslint config shared across the stacks.
 
+## In Development
+**Switch to Lambda Authoriser** - After testing seperate authorisers for the subgraph and gateway, the latency was an issue as expected.  The next step is to replace the HTTP and Userpool authorisers with a shared Lambda Authoriser to take advantage of the token Cacheing across all the Graph's which should improve the performance.
+
 ## Technologies in this repository
 
 - [Apollo Federation ( GraphQL )](https://www.apollographql.com/apollo-federation/)
@@ -22,7 +25,7 @@ This project takes advantage of git hooks using Husky. Currently there are two h
 
 <img width="1244" alt="Screenshot 2021-12-06 at 19 42 16" src="https://user-images.githubusercontent.com/18420698/144911617-650c26cd-f86b-4b57-b50f-c5cbed90ad33.png">
 
-### Core Stack
+## Core Stack
 
 SST Stack written in typescript, responsible for deploying the core resources of the app
 
@@ -32,27 +35,27 @@ DynamoDB Table
 GraphQL Federated Gateway Lambda ( Typescript )
 
 
-### SubGraph Stack
+## SubGraph Stack
 
 SST Stack written in Javascript, responsible for deploying each of the federated GraphQL Subgraphs
 
-## Management SubGraph
+### Management SubGraph
 
 The Management Subgraph is responsible for handling the account and organisation management for the app. Creation and management of user accoounts and organisation management is handled through this subgraph
 
 GraphQL Federated Management Subgraph Lambda ( Go )
 
-## Account SubGraph
+### Account SubGraph
 
 The Account Subgraph is responsible for handling the creation and management of bank accounts and services for the app. 
 
 GraphQL Federated Account Subgraph Lambda ( Go )
 
-### Frontend
+## Frontend
 
 Basic React App written in typescript which is connected to the gateway lambda and userpool deployed as part of the core stack.
 
-### Prerequisities
+## Prerequisities
 
 - go 1.17+ installed
 - node 14+ installed
