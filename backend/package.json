@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "yarn go:test",
     "script": "esr",
     "go:test": "go test --cover ./..."
   },

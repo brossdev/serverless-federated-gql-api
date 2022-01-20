@@ -9,8 +9,7 @@
     "frontend"
   ],
   "scripts": {
-    "test": "jest test",
-    "subgraphs": "yarn run start -w subgraphs",
+    "test": "jest test && yarn test:services",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && yarn run start -w core",
     "frontend": "yarn run start -w frontend",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
@@ -18,7 +17,7 @@
     "validate": "scripts/validate",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache \"**/*.+(tsx|ts|js|jsx)\"",
     "prepare": "husky install",
-    "test:services": "yarn workspace backend run go:test"
+    "test:services": "yarn workspace backend run test"
   },
   "keywords": [],
   "author": "",
