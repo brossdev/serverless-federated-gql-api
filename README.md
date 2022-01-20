@@ -2,6 +2,11 @@
 
 This project was built as a proof of concept to test building a Federated GraphQL API using AWS Lambda and SST Framework along with some developer tooling i wanted to experiment with. This is not designed to be production ready but does use some useful developer tooling such git hooks and a root level Typescript and Eslint config shared across the stacks.
 
+## In Development
+
+After testing seperate authorisers for the subgraph and gateway, the latency was an issue as expected.  The next step is to replace the HTTP and Userpool authorisers with a shared Lambda Authoriser to take advantage of the token Cacheing across all the Graph's which should improve the performance.
+
+
 ## Technologies in this repository
 
 - [Apollo Federation ( GraphQL )](https://www.apollographql.com/apollo-federation/)
@@ -32,17 +37,17 @@ DynamoDB Table
 GraphQL Federated Gateway Lambda ( Typescript )
 
 
-### SubGraph Stack
+## SubGraph Stack
 
 SST Stack written in Javascript, responsible for deploying each of the federated GraphQL Subgraphs
 
-## Management SubGraph
+### Management SubGraph
 
 The Management Subgraph is responsible for handling the account and organisation management for the app. Creation and management of user accoounts and organisation management is handled through this subgraph
 
 GraphQL Federated Management Subgraph Lambda ( Go )
 
-## Account SubGraph
+### Account SubGraph
 
 The Account Subgraph is responsible for handling the creation and management of bank accounts and services for the app. 
 

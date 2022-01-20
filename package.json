@@ -1,17 +1,18 @@
 {
-  "name": "sls-gql-fed",
+  "name": "@sls-gql-fed/app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "workspaces": [
-    "core",
-    "subgraphs",
+    "backend",
     "frontend"
   ],
   "scripts": {
-    "subgraphs": "npm run start -w subgraphs",
-    "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && npm run start -w core",
-    "frontend": "npm run start -w frontend",
+    "test": "jest test",
+    "subgraphs": "yarn run start -w subgraphs",
+    "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && yarn run start -w core",
+    "frontend": "yarn run start -w frontend",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
     "type-check": "tsc -b",
     "validate": "scripts/validate",
@@ -22,7 +23,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@aws-cdk/aws-apigatewayv2": "1.132.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers": "1.132.0",
+    "@aws-cdk/aws-cognito": "1.132.0",
+    "@aws-cdk/aws-iam": "1.132.0",
+    "@aws-cdk/aws-ssm": "1.132.0",
+    "@aws-cdk/core": "1.132.0",
+    "@serverless-stack/cli": "0.53.3",
+    "@serverless-stack/resources": "0.53.3"
+  },
   "devDependencies": {
+    "@aws-cdk/assert": "1.132.0",
+    "@types/aws-lambda": "^8.10.70",
     "@apollo/rover": "^0.4.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
@@ -35,6 +48,20 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.2",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
+    "@testing-library/jest-dom": "^5.15.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "esbuild-runner": "^2.2.1",
+    "jest": "^27.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "/.eslintrc.js"
+    ]
   }
 }
