@@ -26,7 +26,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const newUser = await Auth.signUp({
+      const createdUser = await Auth.signUp({
         username: email,
         password,
         attributes: {
@@ -35,7 +35,7 @@ const Register = () => {
           email,
         },
       });
-      setNewUser(newUser);
+      setNewUser(createdUser);
     } catch (error) {
       const errMessage = getErrorMessage(error);
       if (errMessage === 'UsernameExistsException') {

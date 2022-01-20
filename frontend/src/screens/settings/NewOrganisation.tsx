@@ -29,8 +29,8 @@ const CreateOrganisation = () => {
         variables: { input: { name, contactEmail } },
       });
       navigate('/settings/organisations');
-    } catch (error) {
-      const errMessage = getErrorMessage(error);
+    } catch (err) {
+      const errMessage = getErrorMessage(err);
       return errMessage;
     }
   }

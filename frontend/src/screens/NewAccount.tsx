@@ -1,8 +1,7 @@
 import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import CREATE_ACCOUNT_MUTATION from '../api/graphql/mutations/createAccount';
-import {
+import CREATE_ACCOUNT_MUTATION, {
   BankAccountEnum,
   CreatAccountInput,
   CreateAccountData,
@@ -35,8 +34,8 @@ const CreateAccount = () => {
         variables: { input: { name, type } },
       });
       navigate('/accounts');
-    } catch (error) {
-      const errMessage = getErrorMessage(error);
+    } catch (err) {
+      const errMessage = getErrorMessage(err);
       return errMessage;
     }
   }
