@@ -18,7 +18,7 @@
     "validate": "scripts/validate",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache \"**/*.+(tsx|ts|js|jsx)\"",
     "prepare": "husky install",
-    "test:subgraphs": "scripts/test-subgraphs"
+    "test:services": "yarn workspace backend run go:test"
   },
   "keywords": [],
   "author": "",

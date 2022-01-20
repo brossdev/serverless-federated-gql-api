@@ -1,5 +1,5 @@
 {
-  "name": "core",
+  "name": "gql-federation",
   "region": "eu-west-1",
   "main": "stacks/index.ts"
 }

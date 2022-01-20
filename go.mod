@@ -1,11 +1,16 @@
-module subgraphs
+module gql
 
 go 1.17
 
 require (
 	github.com/99designs/gqlgen v0.14.0
+	github.com/aws/aws-cdk-go/awscdk v1.136.0-devpreview
+	github.com/aws/aws-cdk-go/awscdk/v2 v2.2.0
 	github.com/aws/aws-lambda-go v1.23.0
 	github.com/aws/aws-sdk-go v1.41.14
+	github.com/aws/constructs-go/constructs/v10 v10.0.12
+	github.com/aws/constructs-go/constructs/v3 v3.3.166
+	github.com/aws/jsii-runtime-go v1.49.0
 	github.com/awslabs/aws-lambda-go-api-proxy v0.11.0
 	github.com/gin-gonic/gin v1.7.4
 	github.com/segmentio/ksuid v1.0.4
@@ -14,6 +19,7 @@ require (
 )
 
 require (
+	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
