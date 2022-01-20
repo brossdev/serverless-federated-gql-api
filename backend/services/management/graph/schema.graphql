@@ -1,0 +1,38 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Organisation @key(fields: "id") {
+  id: ID!
+  name: String!
+  contactEmail: String
+  createdAt: String
+}
+
+type UserOrganisation {
+  name: String!
+  keyName: String
+  role: String
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  createdAt: String
+  organisations: [UserOrganisation]
+}
+
+input OrganisationInput {
+  name: String!
+  contactEmail: String!
+}
+
+extend type Query {
+  getCurrentUser: User!
+  getOrganisation(organisationId: ID!): Organisation!
+}
+
+type Mutation {
+  createOrganisation(input: OrganisationInput!): Organisation!
+}

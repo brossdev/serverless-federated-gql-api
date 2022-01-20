@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "script": "esr",
+    "go:test": "go test --cover ./..."
+  },
+  "devDependencies": {
+    "esbuild-runner": "^2.2.1",
+    "jest": "^27.2.0",
+    "@types/aws-lambda": "^8.10.70"
+  },
+  "dependencies": {
+    "@apollo/federation": "^0.33.0",
+    "@apollo/gateway": "^0.42.0",
+    "@aws-sdk/client-dynamodb": "^3.40.0",
+    "@aws-sdk/util-dynamodb": "^3.40.0",
+    "@types/jsonwebtoken": "^8.5.6",
+    "apollo-server-core": "^3.3.0",
+    "apollo-server-lambda": "^3.3.0",
+    "aws-jwt-verify": "^1.0.3",
+    "aws-lambda": "^1.0.7",
+    "axios": "^0.24.0",
+    "date-fns": "^2.27.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.5"
+  }
+}
