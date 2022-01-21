@@ -1,4 +1,4 @@
-import { GetItemOutput } from '@aws-sdk/client-dynamodb';
+import { AttributeValue, GetItemOutput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { format } from 'date-fns';
 
@@ -18,7 +18,13 @@ export interface UserType {
 
 export const DB_MAP = {
   USER: {
-    putInput: ({ email, id, firstName, lastName, organisations }: UserType) =>
+    putInput: ({
+      email,
+      id,
+      firstName,
+      lastName,
+      organisations,
+    }: UserType): { [key: string]: AttributeValue } =>
       marshall({
         PK: `ACCOUNT#${id}`,
         SK: `ACCOUNT#${id}`,
@@ -30,12 +36,12 @@ export const DB_MAP = {
         type: 'user',
         createdAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       }),
-    getInput: ({ id }: { id: string }) =>
+    getInput: ({ id }: { id: string }): { [key: string]: AttributeValue } =>
       marshall({
         PK: `ACCOUNT#${id}`,
         SK: `ACCOUNT#${id}`,
       }),
-    parse: (getUserOutput: GetItemOutput) => {
+    parse: (getUserOutput: GetItemOutput): UserType | null => {
       const user = getUserOutput.Item
         ? (unmarshall(getUserOutput.Item) as UserType)
         : null;

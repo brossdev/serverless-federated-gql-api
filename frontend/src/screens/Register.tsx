@@ -1,5 +1,5 @@
 import React from 'react';
-import Auth from '@aws-amplify/auth';
+import { Auth } from '@aws-amplify/auth';
 import { getErrorMessage } from '../lib/error-lib';
 
 const Register = () => {

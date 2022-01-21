@@ -1,5 +1,5 @@
 import React from 'react';
-import Auth from '@aws-amplify/auth';
+import { Auth } from '@aws-amplify/auth';
 import { AuthContext } from './contexts/auth-context';
 import type { AuthUser } from './contexts/auth-context';
 import {
