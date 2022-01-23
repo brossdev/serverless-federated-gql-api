@@ -4,14 +4,13 @@ This project was built as a proof of concept to test building a Federated GraphQ
 
 ## In Development
 
-After testing seperate authorisers for the subgraph and gateway, the latency was an issue as expected.  The next step is to replace the HTTP and Userpool authorisers with a shared Lambda Authoriser to take advantage of the token Cacheing across all the Graph's which should improve the performance.
-
+After testing seperate authorisers for the subgraph and gateway, the latency was an issue as expected. The next step is to replace the HTTP and Userpool authorisers with a shared Lambda Authoriser to take advantage of the token Cacheing across all the Graph's which should improve the performance.
 
 ## Technologies in this repository
 
 - [Apollo Federation ( GraphQL )](https://www.apollographql.com/apollo-federation/)
 - [Serverless Stack ( SST )](https://serverless-stack.com/)
-- [NPM workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
+- [Yarn workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
 - Git Hooks
 - Typescript
 - Go
@@ -27,31 +26,25 @@ This project takes advantage of git hooks using Husky. Currently there are two h
 
 <img width="1244" alt="Screenshot 2021-12-06 at 19 42 16" src="https://user-images.githubusercontent.com/18420698/144911617-650c26cd-f86b-4b57-b50f-c5cbed90ad33.png">
 
-### Core Stack
+### Backend Stack
 
 SST Stack written in typescript, responsible for deploying the core resources of the app
 
 Cognito UserPool
+Custom Authorizer Lambda ( Typescript )
 Post Confirmation Lambda handler ( Typescript )
 DynamoDB Table
 GraphQL Federated Gateway Lambda ( Typescript )
-
-
-## SubGraph Stack
-
-SST Stack written in Javascript, responsible for deploying each of the federated GraphQL Subgraphs
+GraphQL Federated Management Subgraph Lambda ( Go )
+GraphQL Federated Account Subgraph Lambda ( Go )
 
 ### Management SubGraph
 
 The Management Subgraph is responsible for handling the account and organisation management for the app. Creation and management of user accoounts and organisation management is handled through this subgraph
 
-GraphQL Federated Management Subgraph Lambda ( Go )
-
 ### Account SubGraph
 
-The Account Subgraph is responsible for handling the creation and management of bank accounts and services for the app. 
-
-GraphQL Federated Account Subgraph Lambda ( Go )
+The Account Subgraph is responsible for handling the creation and management of bank accounts and services for the app.
 
 ### Frontend
 
@@ -61,7 +54,7 @@ Basic React App written in typescript which is connected to the gateway lambda a
 
 - go 1.17+ installed
 - node 14+ installed
-- npm 7+ installed
+- yarn 1.22+ installed
 
 ## Running Locally
 
@@ -70,14 +63,8 @@ Using the SST Framework we can run the gateway and all subgraphs locally. As we 
 From the root directory
 
 ```bash
-$ npm install
-$ npm run core
-```
-
-in a new terminal window
-
-```bash
-$ npm run subgraphs
+$ yarn install
+$ yarn start
 ```
 
 After both subgraphs are running, take note of the AccountApiEndpoint and ManagementApiEndpoint output in the console window. Paste the management api into the routing url of the supergraph config, do the same with the account Endpoint and then restart the core service.
