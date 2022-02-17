@@ -9,9 +9,10 @@
     "frontend"
   ],
   "scripts": {
+    "backend": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && sst start ",
     "test": "jest test && yarn test:services",
     "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && yarn run start -w core",
-    "frontend": "yarn run start -w frontend",
+    "frontend": "yarn -w frontend start",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
     "type-check": "tsc -b",
     "validate": "scripts/validate",
