@@ -1,5 +1,5 @@
 import * as sst from '@serverless-stack/resources';
-import * as ssm from '@aws-cdk/aws-ssm';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 export default class DataStore extends sst.Stack {
   public readonly table: sst.Table;

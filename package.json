@@ -9,9 +9,8 @@
     "frontend"
   ],
   "scripts": {
-    "backend": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && sst start ",
+    "backend": "rover supergraph compose --config supergraph.yaml > ./backend/core/dev-schema.graphql && sst start ",
     "test": "jest test && yarn test:services",
-    "core": "rover supergraph compose --config supergraph.yaml > dev-schema.graphql && yarn run start -w core",
     "frontend": "yarn workspace frontend start",
     "format": "prettier --write \"**/*.+(tsx|ts|js|jsx|json|css|graphql)\"",
     "type-check": "tsc -b",
@@ -24,18 +23,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-cdk/aws-apigatewayv2": "1.132.0",
-    "@aws-cdk/aws-apigatewayv2-authorizers": "1.132.0",
-    "@aws-cdk/aws-cognito": "1.132.0",
-    "@aws-cdk/aws-iam": "1.132.0",
-    "@aws-cdk/aws-ssm": "1.132.0",
-    "@aws-cdk/core": "1.132.0",
-    "@serverless-stack/cli": "0.53.3",
-    "@serverless-stack/resources": "0.53.3"
+    "@aws-cdk/aws-apigatewayv2-alpha": "2.7.0-alpha.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers-alpha": "2.7.0-alpha.0",
+    "@serverless-stack/cli": "0.65.4",
+    "@serverless-stack/resources": "0.65.4",
+    "aws-cdk-lib": "2.7.0"
   },
   "devDependencies": {
     "@apollo/rover": "^0.4.3",
-    "@aws-cdk/assert": "1.132.0",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",

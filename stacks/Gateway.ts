@@ -1,15 +1,15 @@
 import * as sst from '@serverless-stack/resources';
-import * as iam from '@aws-cdk/aws-iam';
-import * as cognito from '@aws-cdk/aws-cognito';
-import { CorsHttpMethod } from '@aws-cdk/aws-apigatewayv2';
-import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cognito from 'aws-cdk-lib/aws-cognito';
+import { CorsHttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
+import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 
 interface GatewayStackProps extends sst.StackProps {
   readonly table: sst.Table;
 }
 
 export default class GatewayStack extends sst.Stack {
-  public readonly api: sst.ApolloApi;
+  public readonly api: sst.GraphQLApi;
 
   public readonly userPool: cognito.UserPool;
 
@@ -76,18 +76,28 @@ export default class GatewayStack extends sst.Stack {
       environment: {
         TABLE_NAME: table.tableName,
         USERPOOL_ID: this.userPool.userPoolId,
+        USERPOOL_CLIENT_ID: this.userPoolClient.userPoolClientId,
       },
     });
 
     authorizerFunction.attachPermissions([authorizerPermissions]);
 
-    const lambdaAuthorizer = new apigAuthorizers.HttpLambdaAuthorizer({
-      authorizerName: `${this.stage}-authorizer`,
-      identitySource: ['$request.header.authorization'],
-      handler: authorizerFunction,
-    });
+    const lambdaAuthorizer = new apigAuthorizers.HttpLambdaAuthorizer(
+      `${this.stage}-authorizer`,
+      authorizerFunction,
+      {
+        authorizerName: `${this.stage}-authorizer`,
+        identitySource: ['$request.header.authorization'],
+      },
+    );
+
+    // const lambdaAuthorizer = new apigAuthorizers.HttpLambdaAuthorizer({
+    //   authorizerName: `${this.stage}-authorizer`,
+    //   identitySource: ['$request.header.authorization'],
+    //   handler: authorizerFunction,
+    // });
     // Create a Apollo GraphQL API
-    this.api = new sst.ApolloApi(this, 'FederatedApi', {
+    this.api = new sst.GraphQLApi(this, 'FederatedApi', {
       //      defaultAuthorizer: new apigAuthorizers.HttpUserPoolAuthorizer({
       //        userPool: this.userPool,
       //        userPoolClients: [this.userPoolClient],

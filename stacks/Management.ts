@@ -1,8 +1,8 @@
 import * as sst from '@serverless-stack/resources';
-import * as iam from '@aws-cdk/aws-iam';
-import * as cognito from '@aws-cdk/aws-cognito';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cognito from 'aws-cdk-lib/aws-cognito';
 //import * as ssm from '@aws-cdk/aws-ssm';
-import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers';
+import * as apigAuthorizers from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 
 interface ManagementStackProps extends sst.StackProps {
   readonly table: sst.Table;
@@ -43,11 +43,14 @@ export default class ManagementStack extends sst.Stack {
     //);
 
     const api = new sst.Api(this, 'ManagementApi', {
-      defaultAuthorizer: new apigAuthorizers.HttpJwtAuthorizer({
-        identitySource: ['$request.header.authorization'],
-        jwtAudience: [userpoolClient.userPoolClientId],
-        jwtIssuer: `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userpool.userPoolId}`,
-      }),
+      defaultAuthorizer: new apigAuthorizers.HttpJwtAuthorizer(
+        'Authorizer',
+        `https://cognito-idp.${AWS_REGION}.amazonaws.com/${userpool.userPoolId}`,
+        {
+          identitySource: ['$request.header.authorization'],
+          jwtAudience: [userpoolClient.userPoolClientId],
+        },
+      ),
       defaultAuthorizationType: sst.ApiAuthorizationType.JWT,
       routes: {
         $default: {

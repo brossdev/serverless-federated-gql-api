@@ -1,8 +1,8 @@
 import * as sst from '@serverless-stack/resources';
-import * as cognito from '@aws-cdk/aws-cognito';
+import * as cognito from 'aws-cdk-lib/aws-cognito';
 
 interface StaticSiteProps extends sst.StackProps {
-  readonly api: sst.ApolloApi;
+  readonly api: sst.GraphQLApi;
   readonly userPool: cognito.UserPool;
   readonly userPoolClient: cognito.UserPoolClient;
 }
